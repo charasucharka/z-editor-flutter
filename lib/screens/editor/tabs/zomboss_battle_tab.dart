@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:z_editor/data/pvz_models.dart';
 import 'package:z_editor/data/zomboss_repository.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/screens/editor/modules/zomboss_selection_screen.dart';
 import 'package:z_editor/widgets/asset_image.dart';
 
@@ -217,7 +218,9 @@ class _ZombossBattleTabState extends State<ZombossBattleTab> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          currentBossInfo?.name ?? 'Unknown Zomboss',
+                          currentBossInfo != null
+                              ? ResourceNames.lookup(context, currentBossInfo.id)
+                              : 'Unknown Zomboss',
                           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         Text(

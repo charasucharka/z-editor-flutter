@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:z_editor/data/pvz_models.dart';
+import 'package:z_editor/l10n/app_localizations.dart';
 import 'package:z_editor/data/rtid_parser.dart';
 import 'package:z_editor/data/reference_repository.dart';
 import 'package:z_editor/data/challenge_repository.dart';
@@ -76,6 +77,11 @@ class _StarChallengeModuleScreenState extends State<StarChallengeModuleScreen> {
     });
   }
 
+  static const _noConfigChallenges = {
+    'StarChallengeSaveMowersProps',
+    'StarChallengePlantFoodNonuseProps',
+  };
+
   void _editChallenge(String challengeRtid) {
     final info = RtidParser.parse(challengeRtid);
     final alias = info?.alias ?? challengeRtid;
@@ -83,7 +89,12 @@ class _StarChallengeModuleScreenState extends State<StarChallengeModuleScreen> {
       (o) => o.aliases?.contains(alias) == true,
       orElse: () => PvzObject(objClass: 'Unknown', objData: {}),
     );
-    
+
+    if (_noConfigChallenges.contains(obj.objClass)) {
+      _showNoConfigDialog(obj.objClass);
+      return;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -95,6 +106,38 @@ class _StarChallengeModuleScreenState extends State<StarChallengeModuleScreen> {
              });
           },
         ),
+      ),
+    );
+  }
+
+  void _showNoConfigDialog(String objClass) {
+    final l10n = AppLocalizations.of(context)!;
+    String title;
+    String message;
+    switch (objClass) {
+      case 'StarChallengeSaveMowersProps':
+        title = l10n.starChallengeSaveMowersTitle;
+        message = l10n.starChallengeSaveMowersNoConfigMessage;
+        break;
+      case 'StarChallengePlantFoodNonuseProps':
+        title = l10n.starChallengePlantFoodNonuseTitle;
+        message = l10n.starChallengePlantFoodNonuseNoConfigMessage;
+        break;
+      default:
+        title = l10n.starChallengeNoConfigTitle;
+        message = l10n.starChallengeNoConfigMessage;
+    }
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.close),
+          ),
+        ],
       ),
     );
   }

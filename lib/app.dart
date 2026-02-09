@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:z_editor/l10n/app_localizations.dart';
 import 'package:z_editor/screens/about_screen.dart';
@@ -13,16 +14,16 @@ class ZEditorApp extends StatefulWidget {
     super.key,
     required this.locale,
     required this.onLocaleChanged,
-    required this.isDarkTheme,
-    required this.onToggleTheme,
+    required this.themeMode,
+    required this.onCycleTheme,
     required this.uiScale,
     required this.onUiScaleChange,
   });
 
   final Locale locale;
   final ValueChanged<Locale> onLocaleChanged;
-  final bool isDarkTheme;
-  final VoidCallback onToggleTheme;
+  final ThemeMode themeMode;
+  final VoidCallback onCycleTheme;
   final double uiScale;
   final ValueChanged<double> onUiScaleChange;
 
@@ -34,6 +35,7 @@ class _ZEditorAppState extends State<ZEditorApp> {
   AppScreen _screen = AppScreen.levelList;
   String _editorFileName = '';
   String _editorFilePath = '';
+  Future<bool> Function()? _editorBackHandler;
 
   void _openLevel(String fileName, String filePath) {
     setState(() {
@@ -58,7 +60,7 @@ class _ZEditorAppState extends State<ZEditorApp> {
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: widget.isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+      themeMode: widget.themeMode,
       locale: widget.locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
@@ -71,7 +73,21 @@ class _ZEditorAppState extends State<ZEditorApp> {
         data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(widget.uiScale),
         ),
-        child: _buildCurrentScreen(),
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) async {
+            if (didPop) return;
+            if (_screen == AppScreen.levelList) {
+              SystemNavigator.pop();
+            } else if (_screen == AppScreen.editor && _editorBackHandler != null) {
+              final shouldLeave = await _editorBackHandler!();
+              if (shouldLeave && mounted) _backToLevelList();
+            } else {
+              if (mounted) _backToLevelList();
+            }
+          },
+          child: _buildCurrentScreen(),
+        ),
       ),
     );
   }
@@ -80,8 +96,8 @@ class _ZEditorAppState extends State<ZEditorApp> {
     switch (_screen) {
       case AppScreen.levelList:
         return LevelListScreen(
-          isDarkTheme: widget.isDarkTheme,
-          onToggleTheme: widget.onToggleTheme,
+          themeMode: widget.themeMode,
+          onCycleTheme: widget.onCycleTheme,
           uiScale: widget.uiScale,
           onUiScaleChange: widget.onUiScaleChange,
           onLevelClick: _openLevel,
@@ -93,8 +109,13 @@ class _ZEditorAppState extends State<ZEditorApp> {
           fileName: _editorFileName,
           filePath: _editorFilePath,
           onBack: _backToLevelList,
-          isDarkTheme: widget.isDarkTheme,
-          onToggleTheme: widget.onToggleTheme,
+          onRegisterBackHandler: (handler) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) setState(() => _editorBackHandler = handler);
+            });
+          },
+          themeMode: widget.themeMode,
+          onCycleTheme: widget.onCycleTheme,
         );
       case AppScreen.about:
         return AboutScreen(onBack: _backToLevelList);

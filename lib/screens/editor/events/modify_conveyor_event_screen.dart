@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:z_editor/data/plant_repository.dart';
 import 'package:z_editor/data/pvz_models.dart';
 import 'package:z_editor/data/rtid_parser.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/widgets/asset_image.dart';
 import 'package:z_editor/widgets/editor_components.dart';
 
@@ -223,7 +224,10 @@ class _ModifyConveyorEventScreenState extends State<ModifyConveyorEventScreen> {
                           ),
                         )
                       : Icon(Icons.eco, color: theme.colorScheme.primary),
-                  title: Text(plant?.name ?? plantId),
+                  title: Text(ResourceNames.lookup(
+                    context,
+                    PlantRepository().getName(plantId),
+                  )),
                   subtitle: Text('Weight: ${p.weight}, Max: ${p.maxCount}'),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete_outline),
@@ -293,7 +297,10 @@ class _ModifyConveyorEventScreenState extends State<ModifyConveyorEventScreen> {
                           ),
                         )
                       : Icon(Icons.eco, color: theme.colorScheme.primary),
-                  title: Text(plant?.name ?? plantId),
+                  title: Text(ResourceNames.lookup(
+                    context,
+                    PlantRepository().getName(plantId),
+                  )),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete_outline),
                     onPressed: () {

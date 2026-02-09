@@ -948,57 +948,13 @@ class _ZombieSpawnEventScreenState extends State<ZombieSpawnEventScreen> {
                   final z = entry.value;
                   final baseType = _resolveBaseTypeName(z);
                   final info = ZombieRepository().getZombieById(baseType);
-                  final name = info?.name ?? baseType;
                   final iconPath = info?.iconAssetPath;
-                  final levelText = _isElite(z)
-                      ? 'Elite'
-                      : (z.level == null ? 'Auto' : 'Lv${z.level}');
-                  final isCustomZ = _isCustomZombie(z);
-                  return InputChip(
-                    label: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (isCustomZ)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 4),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 4, vertical: 1),
-                              decoration: BoxDecoration(
-                                color: pvzOrangeLight.withValues(alpha: 0.9),
-                                borderRadius: BorderRadius.circular(3),
-                              ),
-                              child: Text(
-                                AppLocalizations.of(context)?.customLabel ??
-                                    'C',
-                                style: const TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        Flexible(
-                          child: Text(
-                            '${ResourceNames.lookup(context, name)} ($levelText)',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    avatar: iconPath != null
-                        ? ClipOval(
-                            child: AssetImageWidget(
-                              assetPath: iconPath,
-                              altCandidates: imageAltCandidates(iconPath),
-                              width: 20,
-                              height: 20,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const Icon(Icons.warning, size: 16),
-                    onPressed: () => _showZombieEditSheet(idx),
+                  return _ZombieIconCard(
+                    zombie: z,
+                    iconPath: iconPath,
+                    isElite: _isElite(z),
+                    isCustom: _isCustomZombie(z),
+                    onTap: () => _showZombieEditSheet(idx),
                   );
                 }).toList(),
               ),
@@ -1203,4 +1159,119 @@ class _CustomZombieOption {
 
   final String alias;
   final String rtid;
+}
+
+/// Bigger zombie icon card with C (custom) badge in top-left, level badge in top-right.
+class _ZombieIconCard extends StatelessWidget {
+  const _ZombieIconCard({
+    required this.zombie,
+    required this.iconPath,
+    required this.isElite,
+    required this.isCustom,
+    required this.onTap,
+  });
+
+  final ZombieSpawnData zombie;
+  final String? iconPath;
+  final bool isElite;
+  final bool isCustom;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final levelText = isElite
+        ? 'E'
+        : (zombie.level == null ? '0' : '${zombie.level}');
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: theme.colorScheme.outline.withValues(alpha: 0.5),
+              width: 0.5,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (iconPath != null)
+                  AssetImageWidget(
+                    assetPath: iconPath!,
+                    altCandidates: imageAltCandidates(iconPath!),
+                    width: 56,
+                    height: 56,
+                    fit: BoxFit.cover,
+                  )
+                else
+                  Center(
+                    child: Icon(
+                      Icons.warning,
+                      size: 24,
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                if (isCustom)
+                  Positioned(
+                    top: 2,
+                    left: 2,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: pvzOrangeLight,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        'C',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                Positioned(
+                  top: 2,
+                  right: 2,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.9,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      levelText,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.surface,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

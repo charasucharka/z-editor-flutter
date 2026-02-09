@@ -43,6 +43,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Storage permission required. Enable \"All files access\" in Settings to open level files.';
 
   @override
+  String get storagePermissionDialogTitle => 'Storage Permission Required';
+
+  @override
+  String get storagePermissionDialogMessage =>
+      'This app requires external storage access to open and save level files. Please grant \"All files access\" permission in Settings.';
+
+  @override
+  String get storagePermissionGoToSettings => 'Go to settings';
+
+  @override
+  String get storagePermissionDeny => 'Deny';
+
+  @override
   String get initSetup => 'Initial setup';
 
   @override
@@ -107,10 +120,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmDeleteCheckbox => 'I confirm permanent deletion';
 
   @override
-  String get renameSuccess => 'Renamed successfully';
+  String get renameSuccess => 'Successfully renamed';
 
   @override
   String get renameFail => 'Rename failed, file already exists';
+
+  @override
+  String get renamingFailed => 'Renaming failed';
 
   @override
   String get deleted => 'Deleted';
@@ -137,6 +153,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paste => 'Paste';
+
+  @override
+  String get movingSuccess => 'Moved successfully';
+
+  @override
+  String get movingFail => 'Move failed';
+
+  @override
+  String get moveSameFolder => 'Source and target are the same';
 
   @override
   String get folderCreated => 'Folder created';
@@ -305,6 +330,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discard => 'Discard';
+
+  @override
+  String get stayInEditor => 'Stay';
 
   @override
   String get saved => 'Saved';
@@ -999,6 +1027,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Level restrictions and goals';
 
   @override
+  String get starChallengeNoConfigTitle => 'Challenge';
+
+  @override
+  String get starChallengeNoConfigMessage =>
+      'This challenge has no configurable parameters.';
+
+  @override
+  String get starChallengeSaveMowersTitle => 'Don\'t lose mowers';
+
+  @override
+  String get starChallengeSaveMowersNoConfigMessage =>
+      'This challenge has no configurable parameters.\n\nAll lawn mowers must remain intact at level end. Note: Yard module has no mowers by default.';
+
+  @override
+  String get starChallengePlantFoodNonuseTitle => 'Don\'t use plant food';
+
+  @override
+  String get starChallengePlantFoodNonuseNoConfigMessage =>
+      'This challenge has no configurable parameters.\n\nPlant food use is prohibited.';
+
+  @override
   String get moduleTitle_LevelScoringModuleProperties => 'Scoring';
 
   @override
@@ -1148,6 +1197,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get frozenPlantPlacementConditionNull => 'None (null)';
+
+  @override
+  String get noConditions => 'No conditions';
 
   @override
   String get frozenPlantPlacementHelpTitle => 'Legacy Preset Plants - Help';

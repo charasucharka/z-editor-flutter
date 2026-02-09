@@ -42,6 +42,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get storagePermissionHint => '需要存储权限。请在设置中开启「允许管理所有文件」以打开关卡文件。';
 
   @override
+  String get storagePermissionDialogTitle => '需要存储权限';
+
+  @override
+  String get storagePermissionDialogMessage =>
+      '本应用需要访问外部存储以打开和保存关卡文件。请在设置中授予「允许管理所有文件」权限。';
+
+  @override
+  String get storagePermissionGoToSettings => '前往设置';
+
+  @override
+  String get storagePermissionDeny => '拒绝';
+
+  @override
   String get initSetup => '初始化设置';
 
   @override
@@ -110,6 +123,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get renameFail => '重命名失败，已有同名文件';
 
   @override
+  String get renamingFailed => '重命名失败';
+
+  @override
   String get deleted => '已删除';
 
   @override
@@ -134,6 +150,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get paste => '粘贴';
+
+  @override
+  String get movingSuccess => '移动成功';
+
+  @override
+  String get movingFail => '移动失败';
+
+  @override
+  String get moveSameFolder => '源目录和目标目录相同';
 
   @override
   String get folderCreated => '文件夹创建成功';
@@ -299,6 +324,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get discard => '放弃';
+
+  @override
+  String get stayInEditor => '留下';
 
   @override
   String get saved => '已保存';
@@ -966,6 +994,26 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moduleDesc_StarChallengeModuleProperties => '关卡限制与目标';
 
   @override
+  String get starChallengeNoConfigTitle => '挑战';
+
+  @override
+  String get starChallengeNoConfigMessage => '该挑战没有可配置的参数。';
+
+  @override
+  String get starChallengeSaveMowersTitle => '不丢车挑战';
+
+  @override
+  String get starChallengeSaveMowersNoConfigMessage =>
+      '该挑战没有可配置的参数。\n\n通关时所有小推车必须完好无损，注意庭院模块下默认没有小推车。';
+
+  @override
+  String get starChallengePlantFoodNonuseTitle => '禁用能量豆挑战';
+
+  @override
+  String get starChallengePlantFoodNonuseNoConfigMessage =>
+      '该挑战没有可配置的参数。\n\n禁止玩家使用能量豆。';
+
+  @override
   String get moduleTitle_LevelScoringModuleProperties => '计分';
 
   @override
@@ -1101,6 +1149,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get frozenPlantPlacementConditionNull => '无状态 (null)';
+
+  @override
+  String get noConditions => '无条件';
 
   @override
   String get frozenPlantPlacementHelpTitle => '初始植物配置模块说明';

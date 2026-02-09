@@ -13,12 +13,15 @@ class PlantSelectionScreen extends StatefulWidget {
     required this.onPlantSelected,
     this.onMultiPlantSelected,
     required this.onBack,
+    this.excludeIds = const [],
   });
 
   final bool isMultiSelect;
   final void Function(String) onPlantSelected;
   final void Function(List<String>)? onMultiPlantSelected;
   final VoidCallback onBack;
+  /// IDs to exclude from selection (e.g. plants already in the other list).
+  final List<String> excludeIds;
 
   @override
   State<PlantSelectionScreen> createState() => _PlantSelectionScreenState();
@@ -76,11 +79,15 @@ class _PlantSelectionScreenState extends State<PlantSelectionScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final repo = PlantRepository();
-    final plants = repo.search(
+    final allPlants = repo.search(
       _searchQuery,
       _selectedCategory == PlantCategory.collection ? null : _selectedTag,
       _selectedCategory,
     );
+    final excludeSet = widget.excludeIds.toSet();
+    final plants = excludeSet.isEmpty
+        ? allPlants
+        : allPlants.where((p) => !excludeSet.contains(p.id)).toList();
     final visibleTags = _visibleTagsFor(_selectedCategory);
     final tagIndex = visibleTags.indexOf(_selectedTag);
     final safeTagIndex = tagIndex < 0 ? 0 : tagIndex;
@@ -101,8 +108,10 @@ class _PlantSelectionScreenState extends State<PlantSelectionScreen> {
           color: themeColor,
           child: SafeArea(
             bottom: false,
-            child: Column(
-              children: [
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -233,15 +242,17 @@ class _PlantSelectionScreenState extends State<PlantSelectionScreen> {
                       }).toList(),
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
-      floatingActionButton: widget.isMultiSelect
+          floatingActionButton: widget.isMultiSelect
           ? FloatingActionButton(
               onPressed: () {
-                widget.onMultiPlantSelected?.call(_selectedIds.toList());
+                final ids = _selectedIds.toList();
+                widget.onMultiPlantSelected?.call(ids);
               },
               child: const Icon(Icons.check),
             )

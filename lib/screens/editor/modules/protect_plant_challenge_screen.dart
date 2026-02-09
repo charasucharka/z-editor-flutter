@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/data/level_parser.dart';
 import 'package:z_editor/data/plant_repository.dart';
 import 'package:z_editor/data/pvz_models.dart';
@@ -386,7 +387,10 @@ class _PlantListTile extends StatelessWidget {
           ],
         ),
         title: Text(
-          info?.name ?? plant.plantType,
+          ResourceNames.lookup(
+            context,
+            PlantRepository().getName(plant.plantType),
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

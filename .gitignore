@@ -49,3 +49,5 @@ app.*.map.json
 #/assets/
 report.txt
 /ANDROID_LASTEST_BUILD
+/android/signing
+local.properties

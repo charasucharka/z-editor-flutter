@@ -4,6 +4,7 @@ import 'package:z_editor/data/level_parser.dart';
 import 'package:z_editor/data/pvz_models.dart';
 import 'package:z_editor/data/rtid_parser.dart';
 import 'package:z_editor/data/zombie_repository.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/screens/select/zombie_selection_screen.dart';
 import 'package:z_editor/widgets/asset_image.dart' show AssetImageWidget, imageAltCandidates;
 import 'package:z_editor/widgets/editor_components.dart';
@@ -521,7 +522,8 @@ class _InitialZombieEditDialogState extends State<_InitialZombieEditDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final name = ZombieRepository().getName(widget.placement.typeName);
+    final nameKey = ZombieRepository().getName(widget.placement.typeName);
+    final name = ResourceNames.lookup(context, nameKey);
     return AlertDialog(
       title: Text('Edit preset zombie: $name'),
       content: SingleChildScrollView(

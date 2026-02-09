@@ -337,7 +337,7 @@ class ModuleRegistry {
       descriptionKey: 'moduleDesc_SeedBankProperties',
       icon: Icons.yard,
       isCore: true,
-      allowMultiple: true,
+      allowMultiple: false,
       category: ModuleCategory.base,
       defaultAlias: 'SeedBank',
       initialDataFactory: () => SeedBankData(),

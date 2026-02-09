@@ -77,6 +77,7 @@ import 'package:z_editor/screens/select/plant_selection_screen.dart';
 import 'package:z_editor/screens/select/zombie_selection_screen.dart';
 import 'package:z_editor/screens/select/tool_selection_screen.dart';
 import 'package:z_editor/screens/select/stage_selection_screen.dart';
+import 'package:z_editor/theme/app_theme.dart';
 
 enum EditorTabType { settings, timeline, iZombie, vaseBreaker, zomboss }
 
@@ -86,15 +87,17 @@ class EditorScreen extends StatefulWidget {
     required this.fileName,
     required this.filePath,
     required this.onBack,
-    required this.isDarkTheme,
-    required this.onToggleTheme,
+    required this.onRegisterBackHandler,
+    required this.themeMode,
+    required this.onCycleTheme,
   });
 
   final String fileName;
   final String filePath;
   final VoidCallback onBack;
-  final bool isDarkTheme;
-  final VoidCallback onToggleTheme;
+  final void Function(Future<bool> Function()? handler) onRegisterBackHandler;
+  final ThemeMode themeMode;
+  final VoidCallback onCycleTheme;
 
   @override
   State<EditorScreen> createState() => _EditorScreenState();
@@ -113,7 +116,22 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      widget.onRegisterBackHandler(() async {
+        if (_hasChanges) {
+          return await _confirmLeave();
+        }
+        return true;
+      });
+    });
     _loadLevel();
+  }
+
+  @override
+  void dispose() {
+    widget.onRegisterBackHandler(null);
+    super.dispose();
   }
 
   Future<void> _loadLevel() async {
@@ -259,9 +277,21 @@ class _EditorScreenState extends State<EditorScreen> {
     if (mounted) {
       setState(() => _hasChanges = false);
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n?.saved ?? 'Saved')));
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
+      final snackColor = isDark ? pvzGreenDark : pvzGreenLight;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: snackColor,
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              Text(l10n?.saved ?? 'Saved'),
+            ],
+          ),
+        ),
+      );
     }
   }
 
@@ -283,13 +313,17 @@ class _EditorScreenState extends State<EditorScreen> {
         title: Text(l10n?.unsavedChanges ?? 'Unsaved changes'),
         content: Text(l10n?.saveBeforeLeaving ?? 'Save before leaving?'),
         actions: [
-          TextButton(
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(l10n?.discard ?? 'Discard'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n?.cancel ?? 'Cancel'),
+            child: Text(l10n?.stayInEditor ?? 'Stay'),
           ),
           FilledButton(
             onPressed: () async {
@@ -347,6 +381,8 @@ class _EditorScreenState extends State<EditorScreen> {
             }
             _markDirty();
             setState(() {});
+            if (!mounted) return;
+            Navigator.pop(context);
           },
           onBack: () => Navigator.pop(context),
         ),
@@ -1394,12 +1430,13 @@ class _EditorScreenState extends State<EditorScreen> {
             levelFile: _levelFile!,
             onChanged: _markDirty,
             onBack: () => Navigator.pop(context),
-            onRequestPlantSelection: (onSelected) {
+            onRequestPlantSelection: (onSelected, {excludeIds}) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => PlantSelectionScreen(
                     isMultiSelect: true,
+                    excludeIds: excludeIds ?? const [],
                     onPlantSelected: (_) {},
                     onMultiPlantSelected: (ids) {
                       Navigator.pop(context);
@@ -1702,14 +1739,7 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return PopScope(
-      canPop: !_hasChanges,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        final leave = await _confirmLeave();
-        if (leave && mounted) widget.onBack();
-      },
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text(widget.fileName),
           leading: IconButton(
@@ -1747,9 +1777,11 @@ class _EditorScreenState extends State<EditorScreen> {
             ),
             IconButton(
               icon: Icon(
-                widget.isDarkTheme ? Icons.light_mode : Icons.dark_mode,
+                widget.themeMode == ThemeMode.dark
+                    ? Icons.light_mode
+                    : Icons.dark_mode,
               ),
-              onPressed: widget.onToggleTheme,
+              onPressed: widget.onCycleTheme,
             ),
             IconButton(
               icon: const Icon(Icons.save),
@@ -1854,7 +1886,6 @@ class _EditorScreenState extends State<EditorScreen> {
                   },
                 ),
               ),
-      ),
     );
   }
 }

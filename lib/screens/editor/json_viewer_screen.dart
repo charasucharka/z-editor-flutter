@@ -105,7 +105,15 @@ class _JsonViewerScreenState extends State<JsonViewerScreen> {
         widget.onSaved?.call();
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n?.saved ?? 'Saved')),
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(l10n?.saved ?? 'Saved'),
+              ],
+            ),
+          ),
         );
       }
     } catch (e) {

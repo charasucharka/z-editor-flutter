@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:z_editor/data/level_parser.dart';
 import 'package:z_editor/data/plant_repository.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/data/pvz_models.dart';
 import 'package:z_editor/data/rtid_parser.dart';
 import 'package:z_editor/screens/select/plant_selection_screen.dart';
@@ -274,7 +275,8 @@ class _InitialPlantEntryScreenState extends State<InitialPlantEntryScreen> {
                                           child: FittedBox(
                                             fit: BoxFit.contain,
                                             child: _PlantIconSmall(
-                                              firstPlant.plantTypes.firstOrNull ??
+                                              firstPlant.plantTypes
+                                                      .firstOrNull ??
                                                   '',
                                             ),
                                           ),
@@ -285,23 +287,22 @@ class _InitialPlantEntryScreenState extends State<InitialPlantEntryScreen> {
                                           top: 2,
                                           right: 2,
                                           child: Container(
-                                            padding:
-                                                const EdgeInsets.symmetric(
-                                              horizontal: 2,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                              vertical: 2,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: theme.colorScheme
-                                                  .onSurfaceVariant,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                bottomLeft: Radius.circular(4),
+                                              color: Colors.black.withValues(
+                                                alpha: 0.6,
                                               ),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Text(
-                                              '+$count',
+                                              '+${count - 1}',
                                               style: const TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 8,
+                                                fontSize: 10,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -388,6 +389,10 @@ class _InitialPlantCard extends StatelessWidget {
     final theme = Theme.of(context);
     final plantType = plant.plantTypes.firstOrNull ?? '';
     final info = PlantRepository().getPlantInfoById(plantType);
+    final plantName = ResourceNames.lookup(
+      context,
+      PlantRepository().getName(plantType),
+    );
     final path = info?.icon != null
         ? 'assets/images/plants/${info!.icon}'
         : 'assets/images/others/unknown.webp';
@@ -459,24 +464,26 @@ class _InitialPlantCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'R${plant.gridY + 1}:C${plant.gridX + 1}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: Color(0xFF2E7D32),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$plantName (R${plant.gridY + 1}:C${plant.gridX + 1})',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: Color(0xFF2E7D32),
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Level: ${plant.level}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                    Text(
+                      'Level: ${plant.level}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -516,9 +523,10 @@ class _InitialPlantEditDialogState extends State<_InitialPlantEditDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final name = PlantRepository().getName(
+    final nameKey = PlantRepository().getName(
       widget.plant.plantTypes.firstOrNull ?? '',
     );
+    final name = ResourceNames.lookup(context, nameKey);
     return AlertDialog(
       title: Text('Edit $name'),
       content: Column(

@@ -3,6 +3,7 @@ import 'package:z_editor/data/pvz_models.dart';
 import 'package:z_editor/data/rtid_parser.dart';
 import 'package:z_editor/data/zombie_properties_repository.dart';
 import 'package:z_editor/data/zombie_repository.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/theme/app_theme.dart';
 import 'package:z_editor/widgets/asset_image.dart'
     show AssetImageWidget, imageAltCandidates;
@@ -355,8 +356,10 @@ class _WaveManagerModuleScreenState extends State<WaveManagerModuleScreen> {
               final rtid = entry.value;
               final alias = RtidParser.parse(rtid)?.alias ?? rtid;
               final typeName = ZombiePropertiesRepository.getTypeNameByAlias(alias);
-              final displayName = ZombieRepository().getName(typeName);
-              final info = ZombieRepository().getZombieById(typeName);
+              final info = ZombieRepository().getZombieById(typeName) ??
+                  ZombieRepository().getZombieById(alias);
+              final nameKey = info?.name ?? ZombieRepository().getName(typeName);
+              final displayName = ResourceNames.lookup(context, nameKey);
               final level = _firstGroup.zombieLevel.elementAt(idx);
               final iconPath = info?.iconAssetPath;
               return Card(
@@ -402,12 +405,6 @@ class _WaveManagerModuleScreenState extends State<WaveManagerModuleScreen> {
                               displayName,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              typeName,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
                               ),
                             ),
                             Text(

@@ -115,7 +115,6 @@ class _StageSelectionScreenState extends State<StageSelectionScreen> {
                   isSelected: isSelected,
                   onTap: () {
                     widget.onStageSelected(RtidParser.build(stage.alias, 'LevelModules'));
-                    widget.onBack();
                   },
                 );
               },
@@ -155,31 +154,32 @@ class _StageGridItem extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(8),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ClipOval(
                 child: SizedBox(
-                  width: 64,
-                  height: 64,
+                  width: 48,
+                  height: 48,
                   child: stage.iconName != null
                       ? AssetImageWidget(
                           assetPath: 'assets/images/stages/${stage.iconName!}',
                           altCandidates: imageAltCandidates('assets/images/stages/${stage.iconName!}'),
-                          width: 64,
-                          height: 64,
+                          width: 48,
+                          height: 48,
                           fit: BoxFit.cover,
                         )
                       : const AssetImageWidget(
                           assetPath: 'assets/images/others/unknown.webp',
-                          width: 64,
-                          height: 64,
+                          width: 48,
+                          height: 48,
                           fit: BoxFit.cover,
                         ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Text(
                 stage.name,
                 style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),

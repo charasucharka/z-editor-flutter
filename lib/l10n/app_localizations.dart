@@ -166,6 +166,30 @@ abstract class AppLocalizations {
   /// **'Storage permission required. Enable \"All files access\" in Settings to open level files.'**
   String get storagePermissionHint;
 
+  /// No description provided for @storagePermissionDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Permission Required'**
+  String get storagePermissionDialogTitle;
+
+  /// No description provided for @storagePermissionDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This app requires external storage access to open and save level files. Please grant \"All files access\" permission in Settings.'**
+  String get storagePermissionDialogMessage;
+
+  /// No description provided for @storagePermissionGoToSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to settings'**
+  String get storagePermissionGoToSettings;
+
+  /// No description provided for @storagePermissionDeny.
+  ///
+  /// In en, this message translates to:
+  /// **'Deny'**
+  String get storagePermissionDeny;
+
   /// No description provided for @initSetup.
   ///
   /// In en, this message translates to:
@@ -289,7 +313,7 @@ abstract class AppLocalizations {
   /// No description provided for @renameSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Renamed successfully'**
+  /// **'Successfully renamed'**
   String get renameSuccess;
 
   /// No description provided for @renameFail.
@@ -297,6 +321,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rename failed, file already exists'**
   String get renameFail;
+
+  /// No description provided for @renamingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Renaming failed'**
+  String get renamingFailed;
 
   /// No description provided for @deleted.
   ///
@@ -345,6 +375,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paste'**
   String get paste;
+
+  /// No description provided for @movingSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved successfully'**
+  String get movingSuccess;
+
+  /// No description provided for @movingFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Move failed'**
+  String get movingFail;
+
+  /// No description provided for @moveSameFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Source and target are the same'**
+  String get moveSameFolder;
 
   /// No description provided for @folderCreated.
   ///
@@ -657,6 +705,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discard'**
   String get discard;
+
+  /// No description provided for @stayInEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get stayInEditor;
 
   /// No description provided for @saved.
   ///
@@ -1948,6 +2002,42 @@ abstract class AppLocalizations {
   /// **'Level restrictions and goals'**
   String get moduleDesc_StarChallengeModuleProperties;
 
+  /// No description provided for @starChallengeNoConfigTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge'**
+  String get starChallengeNoConfigTitle;
+
+  /// No description provided for @starChallengeNoConfigMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This challenge has no configurable parameters.'**
+  String get starChallengeNoConfigMessage;
+
+  /// No description provided for @starChallengeSaveMowersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t lose mowers'**
+  String get starChallengeSaveMowersTitle;
+
+  /// No description provided for @starChallengeSaveMowersNoConfigMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This challenge has no configurable parameters.\n\nAll lawn mowers must remain intact at level end. Note: Yard module has no mowers by default.'**
+  String get starChallengeSaveMowersNoConfigMessage;
+
+  /// No description provided for @starChallengePlantFoodNonuseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t use plant food'**
+  String get starChallengePlantFoodNonuseTitle;
+
+  /// No description provided for @starChallengePlantFoodNonuseNoConfigMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This challenge has no configurable parameters.\n\nPlant food use is prohibited.'**
+  String get starChallengePlantFoodNonuseNoConfigMessage;
+
   /// No description provided for @moduleTitle_LevelScoringModuleProperties.
   ///
   /// In en, this message translates to:
@@ -2217,6 +2307,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'None (null)'**
   String get frozenPlantPlacementConditionNull;
+
+  /// No description provided for @noConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'No conditions'**
+  String get noConditions;
 
   /// No description provided for @frozenPlantPlacementHelpTitle.
   ///

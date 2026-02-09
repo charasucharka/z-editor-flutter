@@ -10,8 +10,8 @@ import 'package:z_editor/l10n/app_localizations.dart';
 class LevelListScreen extends StatefulWidget {
   const LevelListScreen({
     super.key,
-    required this.isDarkTheme,
-    required this.onToggleTheme,
+    required this.themeMode,
+    required this.onCycleTheme,
     required this.uiScale,
     required this.onUiScaleChange,
     required this.onLevelClick,
@@ -19,8 +19,8 @@ class LevelListScreen extends StatefulWidget {
     required this.onLanguageTap,
   });
 
-  final bool isDarkTheme;
-  final VoidCallback onToggleTheme;
+  final ThemeMode themeMode;
+  final VoidCallback onCycleTheme;
   final double uiScale;
   final ValueChanged<double> onUiScaleChange;
   final void Function(String fileName, String filePath) onLevelClick;
@@ -39,6 +39,8 @@ class _LevelListScreenState extends State<LevelListScreen> {
   FileItem? _itemToDelete;
   FileItem? _itemToRename;
   FileItem? _itemToCopy;
+  FileItem? _itemToMove;
+  String? _moveSourcePath;
   String _renameInput = '';
   String _copyInput = '';
   bool _showNewFolderDialog = false;
@@ -65,23 +67,17 @@ class _LevelListScreenState extends State<LevelListScreen> {
     // On Android 13+, storage is deprecated. Use manageExternalStorage for file access.
     final manageStatus = await Permission.manageExternalStorage.status;
     if (manageStatus.isGranted) return;
-    if (manageStatus.isDenied) {
-      await Permission.manageExternalStorage.request();
-    }
-    // manageExternalStorage opens Settings; guide user if still not granted
-    if (!(await Permission.manageExternalStorage.isGranted) && mounted) {
+    if (mounted) {
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            l10n?.storagePermissionHint ??
-                'Storage permission required. Enable "All files access" in Settings.',
-          ),
-          duration: const Duration(seconds: 5),
-          action: SnackBarAction(
-            label: l10n?.settings ?? 'Settings',
-            onPressed: () => openAppSettings(),
-          ),
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => _StoragePermissionDialog(
+          l10n: l10n,
+          onDeny: () {
+            Navigator.pop(ctx);
+            SystemNavigator.pop();
+          },
         ),
       );
     }
@@ -148,23 +144,45 @@ class _LevelListScreenState extends State<LevelListScreen> {
       _pathStack.last.path, target.name, finalName, target.isDirectory,
     );
     if (mounted) {
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
       if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.renameSuccess)),
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF2E7D32) : const Color(0xFF4CAF50),
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(AppLocalizations.of(context)!.renameSuccess),
+              ],
+            ),
+          ),
         );
         setState(() => _itemToRename = null);
         _loadCurrentDirectory();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.renameFail)),
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF8D6E00) : const Color(0xFFFFF59D),
+            content: Row(
+              children: [
+                Icon(Icons.report_problem, color: isDark ? const Color(0xFFFFEB3B) : const Color(0xFF8D6E00), size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)!.renamingFailed,
+                  style: TextStyle(color: isDark ? Colors.white : const Color(0xFF5D4E00)),
+                ),
+              ],
+            ),
+          ),
         );
       }
     }
   }
 
 
-  Future<void> _handleCopyConfirm() async {
-    final target = _itemToCopy;
+  Future<void> _handleCopyConfirm(FileItem? target) async {
     if (target == null || _pathStack.isEmpty) return;
     var finalName = _copyInput.trim();
     if (!finalName.toLowerCase().endsWith('.json')) finalName += '.json';
@@ -172,15 +190,38 @@ class _LevelListScreenState extends State<LevelListScreen> {
       target.path, _pathStack.last.path, finalName,
     );
     if (mounted) {
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
       if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.copySuccess)),
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF2E7D32) : const Color(0xFF4CAF50),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(AppLocalizations.of(context)!.copySuccess),
+              ],
+            ),
+          ),
         );
         setState(() => _itemToCopy = null);
         _loadCurrentDirectory();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.copyFail)),
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF8D6E00) : const Color(0xFFFFF59D),
+            content: Row(
+              children: [
+                Icon(Icons.report_problem, color: isDark ? const Color(0xFFFFEB3B) : const Color(0xFF8D6E00), size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)!.copyFail,
+                  style: TextStyle(color: isDark ? Colors.white : const Color(0xFF5D4E00)),
+                ),
+              ],
+            ),
+          ),
         );
       }
     }
@@ -190,9 +231,20 @@ class _LevelListScreenState extends State<LevelListScreen> {
     if (_newFolderNameInput.trim().isEmpty || _pathStack.isEmpty) return;
     final ok = await LevelRepository.createDirectory(_pathStack.last.path, _newFolderNameInput.trim());
     if (mounted) {
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
       if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.folderCreated)),
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF2E7D32) : const Color(0xFF4CAF50),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(AppLocalizations.of(context)!.folderCreated),
+              ],
+            ),
+          ),
         );
         setState(() {
           _showNewFolderDialog = false;
@@ -201,7 +253,19 @@ class _LevelListScreenState extends State<LevelListScreen> {
         _loadCurrentDirectory();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.createFail)),
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF8D6E00) : const Color(0xFFFFF59D),
+            content: Row(
+              children: [
+                Icon(Icons.report_problem, color: isDark ? const Color(0xFFFFEB3B) : const Color(0xFF8D6E00), size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)!.createFail,
+                  style: TextStyle(color: isDark ? Colors.white : const Color(0xFF5D4E00)),
+                ),
+              ],
+            ),
+          ),
         );
       }
     }
@@ -319,9 +383,20 @@ class _LevelListScreenState extends State<LevelListScreen> {
       _pathStack.last.path, _selectedTemplate, name, content,
     );
     if (mounted) {
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
       if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.levelCreated)),
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF2E7D32) : const Color(0xFF4CAF50),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(AppLocalizations.of(context)!.levelCreated),
+              ],
+            ),
+          ),
         );
         setState(() {
           _newLevelNameInput = '';
@@ -329,7 +404,19 @@ class _LevelListScreenState extends State<LevelListScreen> {
         _loadCurrentDirectory();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.levelCreateFail)),
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF8D6E00) : const Color(0xFFFFF59D),
+            content: Row(
+              children: [
+                Icon(Icons.report_problem, color: isDark ? const Color(0xFFFFEB3B) : const Color(0xFF8D6E00), size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)!.levelCreateFail,
+                  style: TextStyle(color: isDark ? Colors.white : const Color(0xFF5D4E00)),
+                ),
+              ],
+            ),
+          ),
         );
       }
     }
@@ -346,8 +433,12 @@ class _LevelListScreenState extends State<LevelListScreen> {
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadCurrentDirectory),
           IconButton(
-            icon: Icon(widget.isDarkTheme ? Icons.light_mode : Icons.dark_mode),
-            onPressed: widget.onToggleTheme,
+            icon: Icon(
+              widget.themeMode == ThemeMode.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: widget.onCycleTheme,
           ),
           PopupMenuButton<String>(
             itemBuilder: (context) => [
@@ -442,6 +533,41 @@ class _LevelListScreenState extends State<LevelListScreen> {
             )
           else ...[
             _BreadcrumbBar(pathStack: _pathStack, onBreadcrumbClick: _breadcrumbTap),
+            if (_itemToMove != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                color: theme.colorScheme.secondaryContainer,
+                child: Row(
+                  children: [
+                    Icon(Icons.drive_file_move, color: theme.colorScheme.onSecondaryContainer, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            l10n.moving(_itemToMove!.name),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: theme.colorScheme.onSecondaryContainer,
+                            ),
+                          ),
+                          Text(
+                            l10n.movePrompt,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: theme.colorScheme.onSecondaryContainer.withOpacity(0.8),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -475,36 +601,61 @@ class _LevelListScreenState extends State<LevelListScreen> {
                             final itemIndex = index - (_pathStack.length > 1 ? 1 : 0);
                             if (itemIndex >= _fileItems.length) return const SizedBox(height: 80);
                             final item = _fileItems[itemIndex];
-                            return _FileItemRow(
-                              item: item,
-                              onTap: () async {
-                                if (item.isDirectory) {
-                                  _navigateToFolder(item);
-                                } else {
-                                  final ok = await LevelRepository.prepareInternalCache(item.path, item.name);
-                                  if (mounted && ok) widget.onLevelClick(item.name, item.path);
-                                }
-                              },
-                              onRename: () {
-                                setState(() {
-                                  _renameInput = item.isDirectory ? item.name : item.name.replaceFirst(RegExp(r'\.json$'), '');
-                                  _itemToRename = item;
-                                });
-                                WidgetsBinding.instance.addPostFrameCallback((_) => _showRenameDialog());
-                              },
-                              onDelete: () {
-                                setState(() => _itemToDelete = item);
-                                WidgetsBinding.instance.addPostFrameCallback((_) => _showDeleteDialog());
-                              },
-                              onCopy: () {
-                                if (!item.isDirectory) {
+                            final isMovingMode = _itemToMove != null;
+                            final isSelfMoving = isMovingMode && _itemToMove == item;
+                            final actionsDisabled = isMovingMode;
+                            return Opacity(
+                              opacity: (isMovingMode && !item.isDirectory) || isSelfMoving ? 0.5 : 1,
+                              child: _FileItemRow(
+                                item: item,
+                                onTap: () async {
+                                  if (isMovingMode) {
+                                    if (item.isDirectory) _navigateToFolder(item);
+                                  } else {
+                                    if (item.isDirectory) {
+                                      _navigateToFolder(item);
+                                    } else {
+                                      final ok = await LevelRepository.prepareInternalCache(item.path, item.name);
+                                      if (mounted && ok) widget.onLevelClick(item.name, item.path);
+                                    }
+                                  }
+                                },
+                                onRename: actionsDisabled ? () {} : () {
                                   setState(() {
-                                    _copyInput = '${item.name.replaceFirst(RegExp(r'\.json$'), '')}_copy';
-                                    _itemToCopy = item;
+                                    _renameInput = item.isDirectory ? item.name : item.name.replaceFirst(RegExp(r'\.json$'), '');
+                                    _itemToRename = item;
                                   });
-                                  WidgetsBinding.instance.addPostFrameCallback((_) => _showCopyDialog());
-                                }
-                              },
+                                  WidgetsBinding.instance.addPostFrameCallback((_) => _showRenameDialog());
+                                },
+                                onDelete: actionsDisabled ? () {} : () {
+                                  setState(() => _itemToDelete = item);
+                                  WidgetsBinding.instance.addPostFrameCallback((_) => _showDeleteDialog());
+                                },
+                                onCopy: actionsDisabled ? () {} : () async {
+                                  if (!item.isDirectory && _pathStack.isNotEmpty) {
+                                    final baseName = item.name.replaceFirst(RegExp(r'\.json$'), '');
+                                    final nextName = await LevelRepository.getNextAvailableCopyName(
+                                      _pathStack.last.path, baseName,
+                                    );
+                                    if (mounted) {
+                                      setState(() {
+                                        _copyInput = nextName;
+                                        _itemToCopy = item;
+                                      });
+                                      WidgetsBinding.instance.addPostFrameCallback((_) => _showCopyDialog());
+                                    }
+                                  }
+                                },
+                                onMove: actionsDisabled ? () {} : () {
+                                  if (!item.isDirectory && _pathStack.isNotEmpty) {
+                                    setState(() {
+                                      _itemToMove = item;
+                                      _moveSourcePath = _pathStack.last.path;
+                                    });
+                                  }
+                                },
+                                showMove: !item.isDirectory,
+                              ),
                             );
                           },
                         ),
@@ -513,26 +664,53 @@ class _LevelListScreenState extends State<LevelListScreen> {
         ],
       ),
       floatingActionButton: _rootFolderPath != null
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: 'folder',
-                  onPressed: () {
-                    setState(() => _showNewFolderDialog = true);
-                    WidgetsBinding.instance.addPostFrameCallback((_) => _showNewFolderDialogImpl());
-                  },
-                  child: const Icon(Icons.create_new_folder),
-                ),
-                const SizedBox(height: 12),
-                FloatingActionButton(
-                  heroTag: 'level',
-                  onPressed: _openTemplateSelector,
-                  child: const Icon(Icons.add),
-                ),
-              ],
-            )
+          ? _itemToMove != null
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    FloatingActionButton.extended(
+                      heroTag: 'moveCancel',
+                      onPressed: () {
+                        setState(() {
+                          _itemToMove = null;
+                          _moveSourcePath = null;
+                        });
+                      },
+                      backgroundColor: theme.colorScheme.error,
+                      foregroundColor: theme.colorScheme.onError,
+                      icon: const Icon(Icons.close),
+                      label: Text(l10n.cancel),
+                    ),
+                    const SizedBox(height: 12),
+                    FloatingActionButton.extended(
+                      heroTag: 'movePaste',
+                      onPressed: _handleMoveConfirm,
+                      icon: const Icon(Icons.content_paste),
+                      label: Text(l10n.paste),
+                    ),
+                  ],
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: 'folder',
+                      onPressed: () {
+                        setState(() => _showNewFolderDialog = true);
+                        WidgetsBinding.instance.addPostFrameCallback((_) => _showNewFolderDialogImpl());
+                      },
+                      child: const Icon(Icons.create_new_folder),
+                    ),
+                    const SizedBox(height: 12),
+                    FloatingActionButton(
+                      heroTag: 'level',
+                      onPressed: _openTemplateSelector,
+                      child: const Icon(Icons.add),
+                    ),
+                  ],
+                )
           : null,
     );
   }
@@ -569,11 +747,11 @@ class _LevelListScreenState extends State<LevelListScreen> {
   void _showRenameDialog() {
     final item = _itemToRename;
     if (item == null || !mounted) return;
-    setState(() => _itemToRename = null);
     final l10n = AppLocalizations.of(context)!;
     final ctrl = TextEditingController(text: _renameInput);
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.rename),
         content: TextField(
@@ -582,7 +760,13 @@ class _LevelListScreenState extends State<LevelListScreen> {
           onChanged: (v) => _renameInput = v,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+          TextButton(
+            onPressed: () {
+              setState(() => _itemToRename = null);
+              Navigator.pop(ctx);
+            },
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () async {
               _renameInput = ctrl.text;
@@ -599,11 +783,11 @@ class _LevelListScreenState extends State<LevelListScreen> {
   void _showDeleteDialog() {
     final target = _itemToDelete;
     if (target == null || !mounted) return;
-    setState(() => _itemToDelete = null);
     final l10n = AppLocalizations.of(context)!;
     var confirm = false;
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
           title: Text(l10n.confirmDelete),
@@ -612,8 +796,8 @@ class _LevelListScreenState extends State<LevelListScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(l10n.confirmDeleteMessage(
-                target.name,
                 target.isDirectory ? l10n.folderDeleteDetail : l10n.levelDeleteDetail,
+                target.name,
               )),
               const SizedBox(height: 16),
               CheckboxListTile(
@@ -625,7 +809,13 @@ class _LevelListScreenState extends State<LevelListScreen> {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+            TextButton(
+              onPressed: () {
+                setState(() => _itemToDelete = null);
+                Navigator.pop(ctx);
+              },
+              child: Text(l10n.cancel),
+            ),
             FilledButton(
               onPressed: confirm
                   ? () async {
@@ -633,6 +823,10 @@ class _LevelListScreenState extends State<LevelListScreen> {
                       await _handleDeleteConfirmFor(target);
                     }
                   : null,
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(ctx).colorScheme.error,
+                foregroundColor: Colors.white,
+              ),
               child: Text(l10n.confirm),
             ),
           ],
@@ -641,12 +835,82 @@ class _LevelListScreenState extends State<LevelListScreen> {
     );
   }
 
+  Future<void> _handleMoveConfirm() async {
+    final target = _itemToMove;
+    final srcPath = _moveSourcePath;
+    if (target == null || srcPath == null || _pathStack.isEmpty) return;
+    final destPath = _pathStack.last.path;
+    if (srcPath == destPath) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)?.moveSameFolder ?? 'Source and target are the same')),
+        );
+      }
+      setState(() {
+        _itemToMove = null;
+        _moveSourcePath = null;
+      });
+      return;
+    }
+    final ok = await LevelRepository.moveFile(srcPath, target.name, destPath);
+    if (mounted) {
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
+      if (ok) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF2E7D32) : const Color(0xFF4CAF50),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(AppLocalizations.of(context)!.movingSuccess),
+              ],
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: isDark ? const Color(0xFF8D6E00) : const Color(0xFFFFF59D),
+            content: Row(
+              children: [
+                Icon(Icons.report_problem, color: isDark ? const Color(0xFFFFEB3B) : const Color(0xFF8D6E00), size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)!.movingFail,
+                  style: TextStyle(color: isDark ? Colors.white : const Color(0xFF5D4E00)),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+      setState(() {
+        _itemToMove = null;
+        _moveSourcePath = null;
+      });
+      _loadCurrentDirectory();
+    }
+  }
+
   Future<void> _handleDeleteConfirmFor(FileItem target) async {
     if (_pathStack.isEmpty) return;
     await LevelRepository.deleteItem(_pathStack.last.path, target.name, target.isDirectory);
     if (mounted) {
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.deleted)),
+        SnackBar(
+          backgroundColor: isDark ? const Color(0xFF2E7D32) : const Color(0xFF4CAF50),
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.deleted),
+            ],
+          ),
+        ),
       );
       _loadCurrentDirectory();
     }
@@ -655,7 +919,6 @@ class _LevelListScreenState extends State<LevelListScreen> {
   void _showCopyDialog() {
     final item = _itemToCopy;
     if (item == null || !mounted) return;
-    setState(() => _itemToCopy = null);
     final l10n = AppLocalizations.of(context)!;
     final ctrl = TextEditingController(text: _copyInput);
     showDialog(
@@ -673,7 +936,7 @@ class _LevelListScreenState extends State<LevelListScreen> {
             onPressed: () async {
               _copyInput = ctrl.text;
               Navigator.pop(ctx);
-              await _handleCopyConfirm();
+              await _handleCopyConfirm(item);
             },
             child: Text(l10n.copy),
           ),
@@ -799,6 +1062,8 @@ class _FileItemRow extends StatelessWidget {
     required this.onRename,
     required this.onDelete,
     required this.onCopy,
+    required this.onMove,
+    required this.showMove,
   });
 
   final FileItem item;
@@ -806,6 +1071,8 @@ class _FileItemRow extends StatelessWidget {
   final VoidCallback onRename;
   final VoidCallback onDelete;
   final VoidCallback onCopy;
+  final VoidCallback onMove;
+  final bool showMove;
 
   @override
   Widget build(BuildContext context) {
@@ -828,10 +1095,81 @@ class _FileItemRow extends StatelessWidget {
           children: [
             IconButton(icon: const Icon(Icons.edit), onPressed: onRename),
             if (!item.isDirectory) IconButton(icon: const Icon(Icons.copy), onPressed: onCopy),
+            if (showMove) IconButton(icon: const Icon(Icons.drive_file_move), onPressed: onMove),
             IconButton(icon: Icon(Icons.delete, color: theme.colorScheme.error), onPressed: onDelete),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Storage permission dialog. Requests permission on button tap and hides when granted.
+class _StoragePermissionDialog extends StatefulWidget {
+  const _StoragePermissionDialog({
+    required this.l10n,
+    required this.onDeny,
+  });
+
+  final AppLocalizations? l10n;
+  final VoidCallback onDeny;
+
+  @override
+  State<_StoragePermissionDialog> createState() => _StoragePermissionDialogState();
+}
+
+class _StoragePermissionDialogState extends State<_StoragePermissionDialog>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkAndDismissIfGranted();
+    }
+  }
+
+  Future<void> _checkAndDismissIfGranted() async {
+    if (await Permission.manageExternalStorage.isGranted && mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = widget.l10n;
+    return AlertDialog(
+      title: Text(l10n?.storagePermissionDialogTitle ?? 'Storage Permission Required'),
+      content: Text(
+        l10n?.storagePermissionDialogMessage ??
+            'This app requires external storage access to open and save level files. Please grant "All files access" permission in Settings.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: widget.onDeny,
+          style: TextButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.error,
+            foregroundColor: Colors.white,
+          ),
+          child: Text(l10n?.storagePermissionDeny ?? 'Deny'),
+        ),
+        FilledButton(
+          onPressed: () async {
+            await Permission.manageExternalStorage.request();
+          },
+          child: Text(l10n?.storagePermissionGoToSettings ?? 'Go to settings'),
+        ),
+      ],
     );
   }
 }

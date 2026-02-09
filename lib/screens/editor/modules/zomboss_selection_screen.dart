@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:z_editor/data/zomboss_repository.dart';
 import 'package:z_editor/l10n/app_localizations.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/widgets/asset_image.dart' show AssetImageWidget, imageAltCandidates;
 
 class ZombossSelectionScreen extends StatefulWidget {
@@ -53,7 +54,7 @@ class _ZombossSelectionScreenState extends State<ZombossSelectionScreen> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: ChoiceChip(
-                    label: Text(tag.getLabel(l10n)),
+                    label: Text(ResourceNames.lookup(context, ZombossInfo.tagLabelKey(tag))),
                     selected: _selectedTag == tag,
                     onSelected: (_) => setState(() => _selectedTag = tag),
                   ),
@@ -132,7 +133,7 @@ class _ZombossItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      boss.name,
+                      ResourceNames.lookup(context, boss.id),
                       style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:z_editor/data/plant_repository.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/data/pvz_models.dart';
 import 'package:z_editor/data/rtid_parser.dart';
 import 'package:z_editor/screens/select/plant_selection_screen.dart';
@@ -257,7 +258,10 @@ class _PlantLevelRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(info?.name ?? plantId),
+                  Text(ResourceNames.lookup(
+                    context,
+                    PlantRepository().getName(plantId),
+                  )),
                   const SizedBox(height: 4),
                   Row(
                     children: [

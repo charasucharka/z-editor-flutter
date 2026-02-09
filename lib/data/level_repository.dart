@@ -114,7 +114,11 @@ class LevelRepository {
     final newPath = p.join(currentDirPath, newName);
     if (await File(newPath).exists() || await Directory(newPath).exists()) return false;
     try {
-      await File(oldPath).rename(newPath);
+      if (isDirectory) {
+        await Directory(oldPath).rename(newPath);
+      } else {
+        await File(oldPath).rename(newPath);
+      }
       if (!isDirectory) {
         final cacheDir = await getCacheDir();
         final oldCache = p.join(cacheDir, oldName);
@@ -143,6 +147,20 @@ class LevelRepository {
       final cacheFile = File(p.join(cacheDir, fileName));
       if (await cacheFile.exists()) await cacheFile.delete();
     }
+  }
+
+  /// Returns the next available name for a copy (without .json).
+  /// E.g. "level_copy", "level_copy2", "level_copy3" if earlier ones exist.
+  static Future<String> getNextAvailableCopyName(String dirPath, String baseNameWithoutExt) async {
+    final items = await getDirectoryContents(dirPath);
+    final existing = items
+        .map((f) => f.name.toLowerCase().replaceFirst(RegExp(r'\.json$'), ''))
+        .toSet();
+    var candidate = '${baseNameWithoutExt}_copy';
+    if (!existing.contains(candidate.toLowerCase())) return candidate;
+    var n = 2;
+    while (existing.contains('${candidate}$n'.toLowerCase())) n++;
+    return '$candidate$n';
   }
 
   static Future<bool> copyLevelToTarget(

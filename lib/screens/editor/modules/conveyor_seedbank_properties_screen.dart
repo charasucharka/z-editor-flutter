@@ -7,6 +7,7 @@ import 'package:z_editor/data/tool_repository.dart';
 import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/widgets/asset_image.dart';
 
+
 /// Conveyor belt properties. Ported from Z-Editor-master ConveyorSeedBankPropertiesEP.kt
 class ConveyorSeedBankPropertiesScreen extends StatefulWidget {
   const ConveyorSeedBankPropertiesScreen({
@@ -413,7 +414,9 @@ class _PlantRow extends StatelessWidget {
     final toolInfo = ToolRepository.get(plant.plantType);
     final isTool = toolInfo != null;
     final plantInfo = PlantRepository().getPlantInfoById(plant.plantType);
-    final displayName = toolInfo?.name ?? PlantRepository().getName(plant.plantType);
+    final displayName = isTool
+        ? toolInfo!.name
+        : ResourceNames.lookup(context, PlantRepository().getName(plant.plantType));
     final iconPath = isTool
         ? (toolInfo.icon != null ? 'assets/images/tools/${toolInfo.icon}' : null)
         : plantInfo?.iconAssetPath;

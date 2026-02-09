@@ -43,6 +43,20 @@ class AppLocalizationsRu extends AppLocalizations {
       'Требуется разрешение на доступ к хранилищу. Включите «Разрешить управление всеми файлами» в настройках.';
 
   @override
+  String get storagePermissionDialogTitle =>
+      'Требуется разрешение на хранилище';
+
+  @override
+  String get storagePermissionDialogMessage =>
+      'Приложению необходим доступ к внешнему хранилищу для открытия и сохранения файлов уровней. Пожалуйста, предоставьте разрешение «Управление всеми файлами» в настройках.';
+
+  @override
+  String get storagePermissionGoToSettings => 'Перейти в настройки';
+
+  @override
+  String get storagePermissionDeny => 'Отказать';
+
+  @override
   String get initSetup => 'Начальная настройка';
 
   @override
@@ -106,10 +120,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get confirmDeleteCheckbox => 'Я подтверждаю безвозвратное удаление';
 
   @override
-  String get renameSuccess => 'Переименовано успешно';
+  String get renameSuccess => 'Успешно переименовано';
 
   @override
   String get renameFail => 'Ошибка переименования, файл уже существует';
+
+  @override
+  String get renamingFailed => 'Ошибка переименования';
 
   @override
   String get deleted => 'Удалено';
@@ -136,6 +153,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get paste => 'Вставить';
+
+  @override
+  String get movingSuccess => 'Файл перемещён';
+
+  @override
+  String get movingFail => 'Ошибка перемещения';
+
+  @override
+  String get moveSameFolder => 'Исходная и целевая папки совпадают';
 
   @override
   String get folderCreated => 'Папка создана';
@@ -305,6 +331,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get discard => 'Не сохранять';
+
+  @override
+  String get stayInEditor => 'Остаться';
 
   @override
   String get saved => 'Сохранено';
@@ -1000,6 +1029,28 @@ class AppLocalizationsRu extends AppLocalizations {
       'Ограничения и цели уровня';
 
   @override
+  String get starChallengeNoConfigTitle => 'Испытание';
+
+  @override
+  String get starChallengeNoConfigMessage =>
+      'У этого испытания нет настраиваемых параметров.';
+
+  @override
+  String get starChallengeSaveMowersTitle => 'Не потерять газонокосилки';
+
+  @override
+  String get starChallengeSaveMowersNoConfigMessage =>
+      'У этого испытания нет настраиваемых параметров.\n\nВсе газонокосилки должны остаться целыми. Примечание: в модуле двора газонокосилок по умолчанию нет.';
+
+  @override
+  String get starChallengePlantFoodNonuseTitle =>
+      'Не использовать растительный корм';
+
+  @override
+  String get starChallengePlantFoodNonuseNoConfigMessage =>
+      'У этого испытания нет настраиваемых параметров.\n\nИспользование растительного корма запрещено.';
+
+  @override
   String get moduleTitle_LevelScoringModuleProperties => 'Очки';
 
   @override
@@ -1151,6 +1202,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get frozenPlantPlacementConditionNull => 'Нет (null)';
+
+  @override
+  String get noConditions => 'Нет условий';
 
   @override
   String get frozenPlantPlacementHelpTitle =>

@@ -22,8 +22,10 @@ class SeedBankPropertiesScreen extends StatefulWidget {
   final PvzLevelFile levelFile;
   final VoidCallback onChanged;
   final VoidCallback onBack;
-  final void Function(void Function(List<String>) onSelected)
-      onRequestPlantSelection;
+  final void Function(
+    void Function(List<String>) onSelected, {
+    List<String>? excludeIds,
+  }) onRequestPlantSelection;
   final void Function(void Function(List<String>) onSelected)
       onRequestZombieSelection;
 
@@ -84,6 +86,7 @@ class _SeedBankPropertiesScreenState extends State<SeedBankPropertiesScreen> {
   }
 
   void _addToPresetPlants() {
+    // Preset: allow duplicates and blacklisted plants
     widget.onRequestPlantSelection((ids) {
       setState(() {
         _data.presetPlantList.addAll(ids);
@@ -93,21 +96,31 @@ class _SeedBankPropertiesScreenState extends State<SeedBankPropertiesScreen> {
   }
 
   void _addToWhiteList() {
+    final exclude = [
+      ..._data.plantWhiteList,
+      ..._data.plantBlackList,
+    ];
     widget.onRequestPlantSelection((ids) {
       setState(() {
-        _data.plantWhiteList.addAll(ids);
+        final toAdd = ids.where((id) => !_data.plantWhiteList.contains(id));
+        _data.plantWhiteList.addAll(toAdd);
         _sync();
       });
-    });
+    }, excludeIds: exclude);
   }
 
   void _addToBlackList() {
+    final exclude = [
+      ..._data.plantWhiteList,
+      ..._data.plantBlackList,
+    ];
     widget.onRequestPlantSelection((ids) {
       setState(() {
-        _data.plantBlackList.addAll(ids);
+        final toAdd = ids.where((id) => !_data.plantBlackList.contains(id));
+        _data.plantBlackList.addAll(toAdd);
         _sync();
       });
-    });
+    }, excludeIds: exclude);
   }
 
   void _addToZombieList() {
@@ -470,6 +483,20 @@ class _SeedBankPropertiesScreenState extends State<SeedBankPropertiesScreen> {
   }
 }
 
+/// For I-zombie mode: show only translated name, never raw codename with zombie_ prefix.
+String _zombieDisplayName(BuildContext context, String id) {
+  final key = ZombieRepository().getName(id);
+  final translated = ResourceNames.lookup(context, key);
+  if (translated == key && key.startsWith('zombie_')) {
+    final withoutPrefix = key.substring(7);
+    return withoutPrefix
+        .split('_')
+        .map((s) => s.isNotEmpty ? '${s[0].toUpperCase()}${s.substring(1).toLowerCase()}' : '')
+        .join(' ');
+  }
+  return translated;
+}
+
 class _ResourceListEditor extends StatelessWidget {
   const _ResourceListEditor({
     required this.title,
@@ -551,7 +578,7 @@ class _ResourceListEditor extends StatelessWidget {
                 children: List.generate(items.length, (i) {
                   final id = items[i];
                   final name = isZombie
-                      ? ResourceNames.lookup(context, ZombieRepository().getName(id))
+                      ? _zombieDisplayName(context, id)
                       : ResourceNames.lookup(context, PlantRepository().getName(id));
                   return InputChip(
                     label: Text(name),

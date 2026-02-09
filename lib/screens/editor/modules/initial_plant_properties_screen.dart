@@ -5,6 +5,7 @@ import 'package:z_editor/data/pvz_models.dart';
 import 'package:z_editor/data/rtid_parser.dart';
 import 'package:z_editor/theme/app_theme.dart';
 import 'package:z_editor/l10n/app_localizations.dart';
+import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/screens/select/plant_selection_screen.dart';
 import 'package:z_editor/widgets/asset_image.dart' show AssetImageWidget, imageAltCandidates;
 import 'package:z_editor/widgets/editor_components.dart';
@@ -366,23 +367,22 @@ class _InitialPlantPropertiesScreenState extends State<InitialPlantPropertiesScr
                                           top: 2,
                                           right: 2,
                                           child: Container(
-                                            padding:
-                                                const EdgeInsets.symmetric(
-                                              horizontal: 2,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                              vertical: 2,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: theme.colorScheme
-                                                  .onSurfaceVariant,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                bottomLeft: Radius.circular(4),
+                                              color: Colors.black.withValues(
+                                                alpha: 0.6,
                                               ),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Text(
-                                              '+$count',
+                                              '+${count - 1}',
                                               style: const TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 8,
+                                                fontSize: 10,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -467,7 +467,12 @@ class _PlacementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final info = PlantRepository().getPlantInfoById(placement.typeName);
+    final plantName = ResourceNames.lookup(
+      context,
+      PlantRepository().getName(placement.typeName),
+    );
     final path = info?.icon != null
         ? 'assets/images/plants/${info!.icon}'
         : 'assets/images/others/unknown.webp';
@@ -517,24 +522,26 @@ class _PlacementCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'R${placement.gridY + 1}:C${placement.gridX + 1}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: Color(0xFF2E7D32),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$plantName (R${placement.gridY + 1}:C${placement.gridX + 1})',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: Color(0xFF2E7D32),
+                      ),
                     ),
-                  ),
-                  Text(
-                    placement.condition ?? 'null',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                    Text(
+                      placement.condition ?? l10n.noConditions,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -575,8 +582,10 @@ class _PlacementEditDialogState extends State<_PlacementEditDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final name =
-        PlantRepository().getName(widget.placement.typeName);
+    final name = ResourceNames.lookup(
+      context,
+      PlantRepository().getName(widget.placement.typeName),
+    );
     return AlertDialog(
       title: Text(l10n.frozenPlantPlacementEditPlant(name)),
       content: Column(

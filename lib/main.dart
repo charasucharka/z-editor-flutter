@@ -9,18 +9,26 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
 
   final localeCode = prefs.getString('locale') ?? 'en';
-  final locale = localeCode == 'zh'
-      ? const Locale('zh')
-      : localeCode == 'ru'
-          ? const Locale('ru')
-          : const Locale('en');
+  final locale = Locale(localeCode);
 
-  final isDark = prefs.getBool('dark_theme') ?? false;
+  final themeModeStr = prefs.getString('theme_mode');
+  final ThemeMode themeMode;
+  if (themeModeStr == 'dark') {
+    themeMode = ThemeMode.dark;
+  } else if (themeModeStr == 'light') {
+    themeMode = ThemeMode.light;
+  } else {
+    final brightness =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    themeMode =
+        brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
+    prefs.setString('theme_mode', themeMode == ThemeMode.dark ? 'dark' : 'light');
+  }
   final uiScale = prefs.getDouble('ui_scale') ?? 1.0;
 
   runApp(ZEditorRoot(
     initialLocale: locale,
-    initialDarkTheme: isDark,
+    initialThemeMode: themeMode,
     initialUiScale: uiScale.toDouble(),
     prefs: prefs,
   ));
@@ -30,13 +38,13 @@ class ZEditorRoot extends StatefulWidget {
   const ZEditorRoot({
     super.key,
     required this.initialLocale,
-    required this.initialDarkTheme,
+    required this.initialThemeMode,
     required this.initialUiScale,
     required this.prefs,
   });
 
   final Locale initialLocale;
-  final bool initialDarkTheme;
+  final ThemeMode initialThemeMode;
   final double initialUiScale;
   final SharedPreferences prefs;
 
@@ -46,14 +54,14 @@ class ZEditorRoot extends StatefulWidget {
 
 class _ZEditorRootState extends State<ZEditorRoot> {
   late Locale _locale;
-  late bool _isDarkTheme;
+  late ThemeMode _themeMode;
   late double _uiScale;
 
   @override
   void initState() {
     super.initState();
     _locale = widget.initialLocale;
-    _isDarkTheme = widget.initialDarkTheme;
+    _themeMode = widget.initialThemeMode;
     _uiScale = widget.initialUiScale;
   }
 
@@ -62,9 +70,15 @@ class _ZEditorRootState extends State<ZEditorRoot> {
     widget.prefs.setString('locale', locale.languageCode);
   }
 
-  void _onToggleTheme() {
-    setState(() => _isDarkTheme = !_isDarkTheme);
-    widget.prefs.setBool('dark_theme', _isDarkTheme);
+  void _onCycleTheme() {
+    setState(() {
+      _themeMode =
+          _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+      widget.prefs.setString(
+        'theme_mode',
+        _themeMode == ThemeMode.dark ? 'dark' : 'light',
+      );
+    });
   }
 
   void _onUiScaleChange(double scale) {
@@ -77,8 +91,8 @@ class _ZEditorRootState extends State<ZEditorRoot> {
     return ZEditorApp(
       locale: _locale,
       onLocaleChanged: _onLocaleChanged,
-      isDarkTheme: _isDarkTheme,
-      onToggleTheme: _onToggleTheme,
+      themeMode: _themeMode,
+      onCycleTheme: _onCycleTheme,
       uiScale: _uiScale,
       onUiScaleChange: _onUiScaleChange,
     );

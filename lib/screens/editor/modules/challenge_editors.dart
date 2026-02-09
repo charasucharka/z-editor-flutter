@@ -56,12 +56,12 @@ class _ChallengeEditorScreenState extends State<ChallengeEditorScreen> {
     switch (widget.object.objClass) {
       case 'StarChallengeBeatTheLevelProps':
         return _BeatTheLevelEditor(object: widget.object, onChanged: widget.onChanged);
-      case 'StarChallengeSaveMowerProps':
+      case 'StarChallengeSaveMowersProps':
       case 'StarChallengePlantFoodNonuseProps':
         return const Center(
           child: Text("This challenge doesn't support configuration."),
         );
-      case 'StarChallengePlantSurviveProps':
+      case 'StarChallengePlantsSurviveProps':
         return _SimpleCountEditor(
           object: widget.object,
           field: 'Count',

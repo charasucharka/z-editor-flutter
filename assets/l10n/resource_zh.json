@@ -874,5 +874,21 @@
   "zomboss_tag_all": "全部僵王",
   "zomboss_tag_main": "主线/摩登",
   "zomboss_tag_challenge": "挑战/周年",
-  "zomboss_tag_pvz1": "回忆之旅"
+  "zomboss_tag_pvz1": "回忆之旅",
+  "plant_longmalily": "藕花白龙",
+  "plant_goldencassia": "金蝉花",
+  "plant_moton": "魔藤",
+  "plant_uncharted_haystack": "草垛",
+  "plant_uncharted_phatbeet": "地宫魔音甜菜",
+  "plant_uncharted_carrotlauncher": "地宫胡萝卜导弹",
+  "zombie_zombie_towerdefend_wolf_imp": "塔防灰狼小鬼",
+  "zombie_zombie_towerdefend_wolf_fire": "塔防灰狼火把",
+  "zombie_zombie_towerdefend_boss": "塔防灰狼头目",
+  "zombie_qin_shield_segment": "单盾盾卫僵尸",
+  "zombie_qin_shield_pair": "双盾盾卫僵尸",
+  "zombie_qin_shield_triad": "多盾盾卫僵尸",
+  "zombie_qin_jingke": "刺客僵尸",
+  "zombie_qin_taoist": "方士僵尸",
+  "zombie_qin_terracotta_small": "兵马俑僵尸",
+  "zombie_qin_terracotta_mid": "秦俑将军僵尸"
 }

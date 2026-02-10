@@ -3253,9 +3253,7 @@
     {
         "id": "moonflower_iz",
         "name": "plant_moonflower_iz",
-        "tags": [
-            "Parallel"
-        ],
+        "tags": [],
         "icon": "icon_moonflower.webp"
     }
 ]

@@ -4561,5 +4561,32 @@
             "Strong"
         ],
         "icon": "zombie_qin_terracotta_mid.webp"
+    },
+    {
+        "id": "zombie_towerdefend_wolf_imp",
+        "name": "zombie_zombie_towerdefend_wolf_imp",
+        "tags": [
+            "Dark_Beach",
+            "Imp"
+        ],
+        "icon": "zombie_towerdefend_wolf_imp.webp"
+    },
+    {
+        "id": "zombie_towerdefend_wolf_fire",
+        "name": "zombie_zombie_towerdefend_wolf_fire",
+        "tags": [
+            "Dark_Beach",
+            "Basic"
+        ],
+        "icon": "zombie_towerdefend_wolf_fire.webp"
+    },
+    {
+        "id": "zombie_towerdefend_boss",
+        "name": "zombie_zombie_towerdefend_boss",
+        "tags": [
+            "Dark_Beach",
+            "Basic"
+        ],
+        "icon": "zombie_towerdefend_boss.webp"
     }
 ]

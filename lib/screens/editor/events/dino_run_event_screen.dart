@@ -1,0 +1,270 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:z_editor/data/level_parser.dart';
+import 'package:z_editor/data/pvz_models.dart';
+import 'package:z_editor/l10n/app_localizations.dart';
+import 'package:z_editor/widgets/editor_components.dart';
+
+/// Dino run event editor. Row-based dinosaur run hazard.
+class DinoRunEventScreen extends StatefulWidget {
+  const DinoRunEventScreen({
+    super.key,
+    required this.rtid,
+    required this.levelFile,
+    required this.onChanged,
+    required this.onBack,
+  });
+
+  final String rtid;
+  final PvzLevelFile levelFile;
+  final VoidCallback onChanged;
+  final VoidCallback onBack;
+
+  @override
+  State<DinoRunEventScreen> createState() => _DinoRunEventScreenState();
+}
+
+class _DinoRunEventScreenState extends State<DinoRunEventScreen> {
+  late PvzObject _moduleObj;
+  late DinoRunActionPropsData _data;
+  late TextEditingController _waveStartMessageCtrl;
+
+  bool get _isDeepSeaLawn => LevelParser.isDeepSeaLawnFromFile(widget.levelFile);
+  int get _maxRowIndex => _isDeepSeaLawn ? 5 : 4;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  @override
+  void dispose() {
+    _waveStartMessageCtrl.dispose();
+    super.dispose();
+  }
+
+  String _getDefaultWaveStartMessage() {
+    for (final obj in widget.levelFile.objects) {
+      if (obj.objClass == 'DinoRunActionProps' && obj.objData is Map) {
+        final msg = (obj.objData as Map)['WaveStartMessage'] as String?;
+        if (msg != null && msg.isNotEmpty) return msg;
+      }
+    }
+    return '[WARNING_DINO_RUN]';
+  }
+
+  void _loadData() {
+    final alias = LevelParser.extractAlias(widget.rtid);
+    final existing = widget.levelFile.objects.firstWhereOrNull(
+      (o) => o.aliases?.contains(alias) == true,
+    );
+    if (existing != null) {
+      _moduleObj = existing;
+    } else {
+      final defaultMsg = _getDefaultWaveStartMessage();
+      _moduleObj = PvzObject(
+        aliases: [alias],
+        objClass: 'DinoRunActionProps',
+        objData: DinoRunActionPropsData(waveStartMessage: defaultMsg).toJson(),
+      );
+      widget.levelFile.objects.add(_moduleObj);
+    }
+    try {
+      _data = DinoRunActionPropsData.fromJson(
+        Map<String, dynamic>.from(_moduleObj.objData as Map),
+      );
+    } catch (_) {
+      _data = DinoRunActionPropsData(
+        waveStartMessage: _getDefaultWaveStartMessage(),
+      );
+    }
+    if (_data.waveStartMessage.isEmpty) {
+      final defaultMsg = _getDefaultWaveStartMessage();
+      _data = DinoRunActionPropsData(
+        dinoRow: _data.dinoRow,
+        timeInterval: _data.timeInterval,
+        waveStartMessage: defaultMsg,
+      );
+      _moduleObj.objData = _data.toJson();
+    }
+    _waveStartMessageCtrl = TextEditingController(text: _data.waveStartMessage);
+  }
+
+  void _sync() {
+    _moduleObj.objData = _data.toJson();
+    widget.onChanged();
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final alias = LevelParser.extractAlias(widget.rtid);
+    final dinoColor = theme.brightness == Brightness.dark
+        ? const Color(0xFFA2B659)
+        : const Color(0xFF91B900);
+
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: widget.onBack,
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n?.editAlias(alias) ?? 'Edit $alias'),
+            Text(
+              l10n?.eventDinoRun ?? 'Event: Dino run',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => showEditorHelpDialog(
+              context,
+              title: l10n?.eventDinoRun ?? 'Dino run event',
+              sections: [
+                HelpSectionData(
+                  title: l10n?.overview ?? 'Overview',
+                  body: l10n?.eventHelpDinoRunBody ?? '',
+                ),
+                HelpSectionData(
+                  title: l10n?.rowCol0Index ?? 'Row (0-based)',
+                  body: l10n?.eventHelpDinoRunRow ?? '',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.pets, color: dinoColor),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n?.positionAndDuration ?? 'Position & timing',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Text(
+                            l10n?.dinoRow(_data.dinoRow + 1) ?? 'Row (DinoRow): ${_data.dinoRow + 1}',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed: _data.dinoRow > 0
+                                ? () {
+                                    _data = DinoRunActionPropsData(
+                                      dinoRow: _data.dinoRow - 1,
+                                      timeInterval: _data.timeInterval,
+                                      waveStartMessage: _data.waveStartMessage,
+                                    );
+                                    _sync();
+                                  }
+                                : null,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: _data.dinoRow < _maxRowIndex
+                                ? () {
+                                    _data = DinoRunActionPropsData(
+                                      dinoRow: _data.dinoRow + 1,
+                                      timeInterval: _data.timeInterval,
+                                      waveStartMessage: _data.waveStartMessage,
+                                    );
+                                    _sync();
+                                  }
+                                : null,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        initialValue: _data.timeInterval.toString(),
+                        decoration: InputDecoration(
+                          labelText: 'TimeInterval (${l10n?.timeInterval ?? 'Time interval'})',
+                          border: const OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (v) {
+                          final n = int.tryParse(v);
+                          if (n != null) {
+                            _data = DinoRunActionPropsData(
+                              dinoRow: _data.dinoRow,
+                              timeInterval: n,
+                              waveStartMessage: _data.waveStartMessage,
+                            );
+                            _sync();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n?.waveStartMessageLabel ?? 'Red subtitle (WaveStartMessage)',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _waveStartMessageCtrl,
+                        decoration: InputDecoration(
+                          hintText: l10n?.optionalWarningText ?? 'Optional warning text before spawn',
+                          border: const OutlineInputBorder(),
+                        ),
+                        onChanged: (v) {
+                          _data = DinoRunActionPropsData(
+                            dinoRow: _data.dinoRow,
+                            timeInterval: _data.timeInterval,
+                            waveStartMessage: v,
+                          );
+                          _sync();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -99,6 +99,7 @@ class _RenaiStatueSelectionScreenState extends State<RenaiStatueSelectionScreen>
                 builder: (context, constraints) {
                   final isDesktop = constraints.maxWidth > 600;
                   final crossAxisCount = isDesktop ? 6 : 3;
+                  final isMobile = !isDesktop;
                   return GridView.builder(
                     padding: const EdgeInsets.all(16),
                     gridDelegate:
@@ -125,6 +126,7 @@ class _RenaiStatueSelectionScreenState extends State<RenaiStatueSelectionScreen>
                         name: name,
                         iconPath: iconPath,
                         theme: theme,
+                        isMobile: isMobile,
                         showZombossBadge:
                             GridItemRepository.needsZombossBadge(
                               item.typeName,
@@ -147,6 +149,7 @@ class _RenaiStatueCard extends StatelessWidget {
     required this.name,
     required this.iconPath,
     required this.theme,
+    this.isMobile = false,
     this.showZombossBadge = false,
     required this.onTap,
   });
@@ -155,6 +158,7 @@ class _RenaiStatueCard extends StatelessWidget {
   final String name;
   final String iconPath;
   final ThemeData theme;
+  final bool isMobile;
   final bool showZombossBadge;
   final VoidCallback onTap;
 
@@ -169,11 +173,12 @@ class _RenaiStatueCard extends StatelessWidget {
         fit: BoxFit.contain,
       ),
     );
+    final nonHalfScale = isMobile ? 0.75 : 0.55;
     final scaledImage = isNonHalf
         ? Center(
             child: FractionallySizedBox(
-              widthFactor: 0.55,
-              heightFactor: 0.55,
+              widthFactor: nonHalfScale,
+              heightFactor: nonHalfScale,
               child: image,
             ),
           )
@@ -198,18 +203,18 @@ class _RenaiStatueCard extends StatelessWidget {
                             left: 2,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
+                                horizontal: 4,
+                                vertical: 2,
                               ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF7B1FA2),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Text(
                                 'Z',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 20,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

@@ -307,7 +307,7 @@ class _InitialGridItemEntryScreenState extends State<InitialGridItemEntryScreen>
                                                 size: 32,
                                                 fit: BoxFit.contain,
                                                 borderRadius: 4,
-                                                badgeScaleFactor: 1.0),
+                                                badgeScaleFactor: 1.25),
                                           ),
                                         ),
                                       ),
@@ -432,7 +432,7 @@ class _GridItemCard extends StatelessWidget {
                           GridItemRepository.isRenaiStatueNonHalf(item.typeName)
                               ? 3.0
                               : 1.5,
-                      badgeScaleFactor: 1.0,
+                      badgeScaleFactor: 1.25,
                     ),
                   ),
                 ),

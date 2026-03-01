@@ -364,16 +364,22 @@ class _SpawnGraveStonesEventScreenState
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          l10n?.gravestonePool ?? 'Gravestone pool (GravestonePool)',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+        Expanded(
+          child: Text(
+            l10n?.gravestonePool ?? 'Gravestone pool (GravestonePool)',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        FilledButton.icon(
-          onPressed: _addItem,
-          icon: const Icon(Icons.add, size: 16),
-          label: Text(l10n?.addType ?? 'Add type'),
+        const SizedBox(width: 8),
+        Tooltip(
+          message: l10n?.addType ?? 'Add type',
+          child: PvzAddButton(
+            onPressed: _addItem,
+            size: 40,
+          ),
         ),
       ],
     );
@@ -416,7 +422,7 @@ class _SpawnGraveStonesEventScreenState
               iconScaleFactor: GridItemRepository.isRenaiStatueNonHalf(alias)
                   ? 3.0
                   : 1.5,
-              badgeScaleFactor: 1.0,
+              badgeScaleFactor: 1.25,
             ),
             const SizedBox(width: 12),
             Expanded(

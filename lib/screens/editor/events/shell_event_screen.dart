@@ -324,7 +324,7 @@ class _ShellEventScreenState extends State<ShellEventScreen> {
                                                 size: 32,
                                                 fit: BoxFit.contain,
                                                 borderRadius: 4,
-                                                badgeScaleFactor: 1.0),
+                                                badgeScaleFactor: 1.25),
                                           ),
                                         ),
                                       ),
@@ -451,7 +451,7 @@ class _ShellItemCard extends StatelessWidget {
                           GridItemRepository.isRenaiStatueNonHalf(item.type)
                               ? 3.0
                               : 1.5,
-                      badgeScaleFactor: 1.0,
+                      badgeScaleFactor: 1.25,
                     ),
                   ),
                 ),

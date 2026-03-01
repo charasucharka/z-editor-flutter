@@ -303,7 +303,7 @@ class _ZombiePotionModuleScreenState extends State<ZombiePotionModuleScreen> {
                                 GridItemRepository.isRenaiStatueNonHalf(id)
                                     ? 3.0
                                     : 1.5,
-                            badgeScaleFactor: 1.0,
+                            badgeScaleFactor: 1.25,
                           ),
                           title: Text(name),
                           subtitle: Text(id),

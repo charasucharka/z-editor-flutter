@@ -273,18 +273,18 @@ class _GridItemCard extends StatelessWidget {
                             left: 2,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 2,
+                                horizontal: 3,
+                                vertical: 1,
                               ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF7B1FA2),
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(3),
                               ),
                               child: const Text(
                                 'Z',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

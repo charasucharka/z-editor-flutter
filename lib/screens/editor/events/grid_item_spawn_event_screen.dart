@@ -756,7 +756,7 @@ class _GridItemSpawnEventScreenState extends State<GridItemSpawnEventScreen> {
                               gridAlias)
                           ? 3.0
                           : 1.5,
-                      badgeScaleFactor: 1.0,
+                      badgeScaleFactor: 1.25,
                     ),
                     title: Text(() {
                       final d = ResourceNames.lookup(context, 'griditem_$gridAlias');

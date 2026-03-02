@@ -79,6 +79,10 @@ class ModuleRegistry {
         return l10n.moduleTitle_WaveManagerModuleProperties;
       case 'moduleTitle_CustomLevelModuleProperties':
         return l10n.moduleTitle_CustomLevelModuleProperties;
+      case 'moduleTitle_UnchartedModeNo42UniverseModule':
+        return l10n.moduleTitle_UnchartedModeNo42UniverseModule;
+      case 'moduleTitle_PVZ2MausoleumModuleUnchartedMode':
+        return l10n.moduleTitle_PVZ2MausoleumModuleUnchartedMode;
       case 'moduleTitle_StandardLevelIntroProperties':
         return l10n.moduleTitle_StandardLevelIntroProperties;
       case 'moduleTitle_ZombiesAteYourBrainsProperties':
@@ -187,6 +191,10 @@ class ModuleRegistry {
         return l10n.moduleDesc_WaveManagerModuleProperties;
       case 'moduleDesc_CustomLevelModuleProperties':
         return l10n.moduleDesc_CustomLevelModuleProperties;
+      case 'moduleDesc_UnchartedModeNo42UniverseModule':
+        return l10n.moduleDesc_UnchartedModeNo42UniverseModule;
+      case 'moduleDesc_PVZ2MausoleumModuleUnchartedMode':
+        return l10n.moduleDesc_PVZ2MausoleumModuleUnchartedMode;
       case 'moduleDesc_StandardLevelIntroProperties':
         return l10n.moduleDesc_StandardLevelIntroProperties;
       case 'moduleDesc_ZombiesAteYourBrainsProperties':
@@ -318,6 +326,26 @@ class ModuleRegistry {
       category: ModuleCategory.base,
       defaultAlias: 'DefaultCustomLevel',
       defaultSource: 'LevelModules',
+      routeId: 'UnknownDetail',
+    ),
+    'UnchartedModeNo42UniverseModule': const ModuleMetadata(
+      titleKey: 'moduleTitle_UnchartedModeNo42UniverseModule',
+      descriptionKey: 'moduleDesc_UnchartedModeNo42UniverseModule',
+      icon: Icons.science,
+      isCore: false,
+      category: ModuleCategory.base,
+      defaultAlias: 'Universe42',
+      defaultSource: 'CurrentLevel',
+      routeId: 'UnknownDetail',
+    ),
+    'PVZ2MausoleumModuleUnchartedMode': const ModuleMetadata(
+      titleKey: 'moduleTitle_PVZ2MausoleumModuleUnchartedMode',
+      descriptionKey: 'moduleDesc_PVZ2MausoleumModuleUnchartedMode',
+      icon: Icons.landscape,
+      isCore: false,
+      category: ModuleCategory.base,
+      defaultAlias: 'MausoleumUncharted',
+      defaultSource: 'CurrentLevel',
       routeId: 'UnknownDetail',
     ),
     'StandardLevelIntroProperties': const ModuleMetadata(

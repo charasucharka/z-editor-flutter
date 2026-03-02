@@ -753,6 +753,10 @@ class _EditorScreenState extends State<EditorScreen> {
                     },
                     onMultiPlantSelected: (_) {},
                     onBack: () => Navigator.pop(context),
+                    levelFile: _levelFile,
+                    onAddModule: (objClass) {
+                      _addModule(ModuleRegistry.getMetadata(objClass));
+                    },
                   ),
                 ),
               );
@@ -805,6 +809,10 @@ class _EditorScreenState extends State<EditorScreen> {
                     },
                     onMultiPlantSelected: (_) {},
                     onBack: () => Navigator.pop(context),
+                    levelFile: _levelFile,
+                    onAddModule: (objClass) {
+                      _addModule(ModuleRegistry.getMetadata(objClass));
+                    },
                   ),
                 ),
               );
@@ -857,6 +865,10 @@ class _EditorScreenState extends State<EditorScreen> {
                     },
                     onMultiPlantSelected: (_) {},
                     onBack: () => Navigator.pop(context),
+                    levelFile: _levelFile,
+                    onAddModule: (objClass) {
+                      _addModule(ModuleRegistry.getMetadata(objClass));
+                    },
                   ),
                 ),
               );
@@ -904,6 +916,10 @@ class _EditorScreenState extends State<EditorScreen> {
                     },
                     onMultiPlantSelected: (_) {},
                     onBack: () => Navigator.pop(context),
+                    levelFile: _levelFile,
+                    onAddModule: (objClass) {
+                      _addModule(ModuleRegistry.getMetadata(objClass));
+                    },
                   ),
                 ),
               );
@@ -1803,6 +1819,7 @@ class _EditorScreenState extends State<EditorScreen> {
             levelFile: _levelFile!,
             onChanged: _markDirty,
             onBack: () => Navigator.pop(context),
+            onAddModule: (objClass) => _addModule(ModuleRegistry.getMetadata(objClass)),
           ),
         ),
       );
@@ -1829,6 +1846,10 @@ class _EditorScreenState extends State<EditorScreen> {
                       onSelected(id);
                     },
                     onBack: () => Navigator.pop(context),
+                    levelFile: _levelFile,
+                    onAddModule: (objClass) {
+                      _addModule(ModuleRegistry.getMetadata(objClass));
+                    },
                   ),
                 ),
               );
@@ -1890,6 +1911,10 @@ class _EditorScreenState extends State<EditorScreen> {
                       onSelected(ids);
                     },
                     onBack: () => Navigator.pop(context),
+                    levelFile: _levelFile,
+                    onAddModule: (objClass) {
+                      _addModule(ModuleRegistry.getMetadata(objClass));
+                    },
                   ),
                 ),
               );
@@ -1925,6 +1950,7 @@ class _EditorScreenState extends State<EditorScreen> {
             levelFile: _levelFile!,
             onChanged: _markDirty,
             onBack: () => Navigator.pop(context),
+            onAddModule: (objClass) => _addModule(ModuleRegistry.getMetadata(objClass)),
           ),
         ),
       );
@@ -1940,6 +1966,7 @@ class _EditorScreenState extends State<EditorScreen> {
             levelFile: _levelFile!,
             onChanged: _markDirty,
             onBack: () => Navigator.pop(context),
+            onAddModule: (objClass) => _addModule(ModuleRegistry.getMetadata(objClass)),
           ),
         ),
       );
@@ -1985,6 +2012,7 @@ class _EditorScreenState extends State<EditorScreen> {
             levelFile: _levelFile!,
             onChanged: _markDirty,
             onBack: () => Navigator.pop(context),
+            onAddModule: (objClass) => _addModule(ModuleRegistry.getMetadata(objClass)),
           ),
         ),
       );
@@ -2104,6 +2132,7 @@ class _EditorScreenState extends State<EditorScreen> {
             levelFile: _levelFile!,
             onChanged: _markDirty,
             onBack: () => Navigator.pop(context),
+            onAddModule: (objClass) => _addModule(ModuleRegistry.getMetadata(objClass)),
           ),
         ),
       );
@@ -2453,6 +2482,9 @@ class _EditorScreenState extends State<EditorScreen> {
                                   return VaseBreakerTab(
                                     levelFile: _levelFile!,
                                     onChanged: _markDirty,
+                                    onAddModule: (objClass) {
+                                      _addModule(ModuleRegistry.getMetadata(objClass));
+                                    },
                                   );
                                 case EditorTabType.zomboss:
                                   return ZombossBattleTab(

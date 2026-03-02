@@ -17,10 +17,12 @@ class VaseBreakerTab extends StatefulWidget {
     super.key,
     required this.levelFile,
     required this.onChanged,
+    this.onAddModule,
   });
 
   final PvzLevelFile levelFile;
   final VoidCallback onChanged;
+  final void Function(String objClass)? onAddModule;
 
   @override
   State<VaseBreakerTab> createState() => _VaseBreakerTabState();
@@ -538,6 +540,8 @@ class _VaseBreakerTabState extends State<VaseBreakerTab> {
             Navigator.pop(ctx);
           },
           onBack: () => Navigator.pop(context),
+          levelFile: widget.levelFile,
+          onAddModule: widget.onAddModule,
         ),
       ),
     );

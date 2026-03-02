@@ -170,13 +170,18 @@ class PlantInfo {
   final String name;
   final List<PlantTag> tags;
   final String? icon;
+  /// Internal tags (e.g. _internal_no42, _internal_mausoleum) used for module gating.
+  final List<String> internalTags;
 
   PlantInfo({
     required this.id,
     required this.name,
     required this.tags,
     this.icon,
+    this.internalTags = const [],
   });
+
+  bool hasInternalTag(String tag) => internalTags.contains(tag);
 
   String? get iconAssetPath {
     if (icon == null) return null;
@@ -219,9 +224,14 @@ class PlantRepository {
 
         _uiConfiguredAliases.add(id);
 
+        final internalTags = <String>[];
         final tags =
             tagsList
                 ?.map((tagStr) {
+                  if (tagStr.startsWith('_internal_')) {
+                    internalTags.add(tagStr);
+                    return PlantTag.all;
+                  }
                   final normalizedTag = tagStr
                       .replaceAll('_', '')
                       .toLowerCase();
@@ -239,6 +249,7 @@ class PlantRepository {
           name: name,
           icon: icon,
           tags: tags.isEmpty ? [PlantTag.all] : tags,
+          internalTags: internalTags,
         ));
       }
 

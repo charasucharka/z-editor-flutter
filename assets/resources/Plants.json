@@ -463,8 +463,7 @@
         "name": "plant_empea",
         "tags": [
             "Green",
-            "Trapper",
-            "Electric"
+            "Trapper"
         ],
         "icon": "icon_empea.webp"
     },
@@ -1750,9 +1749,7 @@
         "name": "plant_tristerixaphyllus",
         "tags": [
             "Orange",
-            "Remote",
-            "Poison",
-            "Magic"
+            "Remote"
         ],
         "icon": "icon_tristerixaphyllus.webp"
     },
@@ -1830,7 +1827,7 @@
         "name": "plant_powervine",
         "tags": [
             "Orange",
-            "Remote",
+            "Electric",
             "Remote"
         ],
         "icon": "icon_powervine.webp"
@@ -2852,7 +2849,8 @@
         "name": "plant_dragonbruit",
         "tags": [
             "Orange",
-            "Remote"
+            "Remote",
+            "Poison"
         ],
         "icon": "icon_dragonbruit.webp"
     },
@@ -2913,8 +2911,7 @@
         "name": "plant_paphiopedilum",
         "tags": [
             "Orange",
-            "Remote",
-            "Electric"
+            "Remote"
         ],
         "icon": "icon_paphiopedilum.webp"
     },
@@ -3014,7 +3011,9 @@
         "id": "moton",
         "name": "plant_moton",
         "tags": [
-            "Parallel"
+            "Blue",
+            "Electric",
+            "Remote"
         ],
         "icon": "icon_moton.webp"
     },
@@ -3022,7 +3021,9 @@
         "id": "uncharted_haystack",
         "name": "uncharted_haystack",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "Assist",
+            "_internal_mausoleum"
         ],
         "icon": "icon_uncharted_haystack.webp"
     },
@@ -3030,7 +3031,8 @@
         "id": "uncharted_phatbeet",
         "name": "uncharted_phatbeet",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_mausoleum"
         ],
         "icon": "icon_phatbeet.webp"
     },
@@ -3038,7 +3040,8 @@
         "id": "uncharted_carrotlauncher",
         "name": "uncharted_carrotlauncher",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_mausoleum"
         ],
         "icon": "icon_carrotlauncher.webp"
     },
@@ -3046,7 +3049,8 @@
         "id": "parallel_sunflower",
         "name": "plant_parallel_sunflower",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_sunflower.webp"
     },
@@ -3054,7 +3058,8 @@
         "id": "parallel_peashooter",
         "name": "plant_parallel_peashooter",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_peashooter.webp"
     },
@@ -3062,7 +3067,8 @@
         "id": "parallel_wallnut",
         "name": "plant_parallel_wallnut",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_wallnut.webp"
     },
@@ -3070,7 +3076,8 @@
         "id": "parallel_potatomine",
         "name": "plant_parallel_potatomine",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_potatomine.webp"
     },
@@ -3078,7 +3085,8 @@
         "id": "parallel_chomper",
         "name": "plant_parallel_chomper",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_chomper.webp"
     },
@@ -3086,7 +3094,8 @@
         "id": "parallel_cherry_bomb",
         "name": "plant_parallel_cherry_bomb",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_cherry_bomb.webp"
     },
@@ -3094,7 +3103,8 @@
         "id": "parallel_iceburg",
         "name": "plant_parallel_iceburg",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_iceburg.webp"
     },
@@ -3102,7 +3112,8 @@
         "id": "parallel_bonkchoy",
         "name": "plant_parallel_bonkchoy",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_bonkchoy.webp"
     },
@@ -3110,7 +3121,8 @@
         "id": "parallel_moonflower",
         "name": "plant_parallel_moonflower",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_moonflower.webp"
     },
@@ -3118,7 +3130,8 @@
         "id": "parallel_shadowshroom",
         "name": "plant_parallel_shadowshroom",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_shadowshroom.webp"
     },
@@ -3126,7 +3139,8 @@
         "id": "parallel_grimrose",
         "name": "plant_parallel_grimrose",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_grimrose.webp"
     },
@@ -3134,7 +3148,8 @@
         "id": "parallel_nightshade",
         "name": "plant_parallel_nightshade",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_nightshade.webp"
     },
@@ -3142,7 +3157,8 @@
         "id": "parallel_dusklobber",
         "name": "plant_parallel_dusklobber",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_dusklobber.webp"
     },
@@ -3150,7 +3166,8 @@
         "id": "parallel_shadowpeashooter",
         "name": "plant_parallel_shadowpeashooter",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_shadowpeashooter.webp"
     },
@@ -3158,7 +3175,8 @@
         "id": "parallel_shadowvanilla",
         "name": "plant_parallel_shadowvanilla",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_shadowvanilla.webp"
     },
@@ -3166,7 +3184,8 @@
         "id": "parallel_primalsunflower",
         "name": "plant_parallel_primalsunflower",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_primalsunflower.webp"
     },
@@ -3174,7 +3193,8 @@
         "id": "parallel_primalpeashooter",
         "name": "plant_parallel_primalpeashooter",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_primalpeashooter.webp"
     },
@@ -3182,7 +3202,8 @@
         "id": "parallel_primalwallnut",
         "name": "plant_parallel_primalwallnut",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_primalwallnut.webp"
     },
@@ -3190,7 +3211,8 @@
         "id": "parallel_primalpotatomine",
         "name": "plant_parallel_primalpotatomine",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_primalpotatomine.webp"
     },
@@ -3198,7 +3220,8 @@
         "id": "parallel_pumpkin",
         "name": "plant_parallel_pumpkin",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_pumpkin.webp"
     },
@@ -3206,7 +3229,8 @@
         "id": "parallel_nekotail",
         "name": "plant_parallel_nekotail",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_nekotail.gif"
     },
@@ -3214,7 +3238,8 @@
         "id": "parallel_kernelpult",
         "name": "plant_parallel_kernelpult",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_kernelpult.webp"
     },
@@ -3222,7 +3247,8 @@
         "id": "parallel_cobcannon",
         "name": "plant_parallel_cobcannon",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_cobcannon.webp"
     },
@@ -3230,7 +3256,8 @@
         "id": "parallel_spikeweed",
         "name": "plant_parallel_spikeweed",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_spikeweed.webp"
     },
@@ -3238,7 +3265,8 @@
         "id": "parallel_splitpea",
         "name": "plant_parallel_splitpea",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_splitpea.webp"
     },
@@ -3246,7 +3274,8 @@
         "id": "parallel_wintermelon",
         "name": "plant_parallel_wintermelon",
         "tags": [
-            "Parallel"
+            "Parallel",
+            "_internal_no42"
         ],
         "icon": "icon_wintermelon.gif"
     },

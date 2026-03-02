@@ -1078,6 +1078,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enable custom lawn framework';
 
   @override
+  String get moduleTitle_UnchartedModeNo42UniverseModule =>
+      'Universe 42 Module';
+
+  @override
+  String get moduleDesc_UnchartedModeNo42UniverseModule =>
+      'Enables usage of No 42 parallel universe plants';
+
+  @override
+  String get moduleTitle_PVZ2MausoleumModuleUnchartedMode => 'Mausoleum module';
+
+  @override
+  String get moduleDesc_PVZ2MausoleumModuleUnchartedMode =>
+      'Enables usage of Mausoleum plants';
+
+  @override
+  String plantModuleRequiredMessage(String moduleName) {
+    return 'In order to select this plant, $moduleName needs to be added.';
+  }
+
+  @override
   String get moduleTitle_StandardLevelIntroProperties => 'Intro Animation';
 
   @override

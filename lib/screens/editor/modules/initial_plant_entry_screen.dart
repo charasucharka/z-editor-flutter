@@ -18,12 +18,14 @@ class InitialPlantEntryScreen extends StatefulWidget {
     required this.levelFile,
     required this.onChanged,
     required this.onBack,
+    this.onAddModule,
   });
 
   final String rtid;
   final PvzLevelFile levelFile;
   final VoidCallback onChanged;
   final VoidCallback onBack;
+  final void Function(String objClass)? onAddModule;
 
   @override
   State<InitialPlantEntryScreen> createState() => _InitialPlantEntryScreenState();
@@ -92,6 +94,8 @@ class _InitialPlantEntryScreenState extends State<InitialPlantEntryScreen> {
             _sync();
           },
           onBack: () => Navigator.pop(context),
+          levelFile: widget.levelFile,
+          onAddModule: widget.onAddModule,
         ),
       ),
     );

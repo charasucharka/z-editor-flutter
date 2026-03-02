@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:z_editor/data/level_parser.dart';
+import 'package:z_editor/data/pvz_models.dart';
+import 'package:z_editor/data/registry/module_registry.dart';
 import 'package:z_editor/data/repository/plant_repository.dart';
+import 'package:z_editor/data/rtid_parser.dart';
 import 'package:z_editor/l10n/app_localizations.dart';
 import 'package:z_editor/l10n/resource_names.dart';
 import 'package:z_editor/widgets/asset_image.dart'
@@ -7,6 +11,12 @@ import 'package:z_editor/widgets/asset_image.dart'
 
 /// Placeholder when a plant has no icon or icon fails to load.
 const String _kUnknownIconPath = 'assets/images/others/unknown.webp';
+
+/// Internal tag → module objClass required to enable those plants.
+const Map<String, String> _internalTagToModule = {
+  '_internal_no42': 'UnchartedModeNo42UniverseModule',
+  '_internal_mausoleum': 'PVZ2MausoleumModuleUnchartedMode',
+};
 
 /// Plant selection. Ported from Z-Editor-master PlantSelectionScreen.kt
 class PlantSelectionScreen extends StatefulWidget {
@@ -17,6 +27,8 @@ class PlantSelectionScreen extends StatefulWidget {
     this.onMultiPlantSelected,
     required this.onBack,
     this.excludeIds = const [],
+    this.levelFile,
+    this.onAddModule,
   });
 
   final bool isMultiSelect;
@@ -25,6 +37,10 @@ class PlantSelectionScreen extends StatefulWidget {
   final VoidCallback onBack;
   /// IDs to exclude from selection (e.g. plants already in the other list).
   final List<String> excludeIds;
+  /// When set, parallel plants gated by modules are disabled until the corresponding module is in the level.
+  final PvzLevelFile? levelFile;
+  /// Called when user taps "Add" in the "module required" dialog. Must add the module to the level and sync.
+  final void Function(String objClass)? onAddModule;
 
   @override
   State<PlantSelectionScreen> createState() => _PlantSelectionScreenState();
@@ -78,11 +94,97 @@ class _PlantSelectionScreenState extends State<PlantSelectionScreen> {
     setState(() {});
   }
 
+  Set<String> _levelModuleObjClasses() {
+    final lf = widget.levelFile;
+    if (lf == null) return {};
+    final parsed = LevelParser.parseLevel(lf);
+    final levelDef = parsed.levelDef;
+    if (levelDef == null) return {};
+    final objectMap = parsed.objectMap;
+    final set = <String>{};
+    for (final rtid in levelDef.modules) {
+      final info = RtidParser.parse(rtid);
+      if (info != null && info.source == 'CurrentLevel') {
+        final obj = objectMap[info.alias];
+        if (obj != null) set.add(obj.objClass);
+      }
+    }
+    return set;
+  }
+
+  bool _isPlantEnabled(PlantInfo plant, Set<String> levelModules) {
+    for (final entry in _internalTagToModule.entries) {
+      if (plant.hasInternalTag(entry.key)) {
+        if (!levelModules.contains(entry.value)) return false;
+      }
+    }
+    return true;
+  }
+
+  String? _requiredModuleForPlant(PlantInfo plant) {
+    for (final entry in _internalTagToModule.entries) {
+      if (plant.hasInternalTag(entry.key)) return entry.value;
+    }
+    return null;
+  }
+
+  Future<void> _onPlantTap(BuildContext context, PlantInfo plant, bool isEnabled, Set<String> levelModules) async {
+    if (isEnabled) {
+      if (widget.isMultiSelect) {
+        setState(() {
+          if (_selectedIds.contains(plant.id)) {
+            _selectedIds.remove(plant.id);
+          } else {
+            _selectedIds.add(plant.id);
+          }
+        });
+      } else {
+        widget.onPlantSelected(plant.id);
+      }
+      return;
+    }
+    final requiredObjClass = _requiredModuleForPlant(plant);
+    if (requiredObjClass == null || widget.onAddModule == null) return;
+    final l10n = AppLocalizations.of(context)!;
+    final meta = ModuleRegistry.getMetadata(requiredObjClass);
+    final moduleName = meta.getTitle(context);
+    final message = l10n.plantModuleRequiredMessage(moduleName);
+    final added = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+            ),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.add),
+          ),
+        ],
+      ),
+    );
+    if (added == true && mounted) {
+      widget.onAddModule!(requiredObjClass);
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final repo = PlantRepository();
+    final levelModuleObjClasses = _levelModuleObjClasses();
     final allPlants = repo.search(
       _searchQuery,
       _selectedCategory == PlantCategory.collection ? null : _selectedTag,
@@ -302,23 +404,13 @@ class _PlantSelectionScreenState extends State<PlantSelectionScreen> {
                           final plant = plants[i];
                           final isSelected = _selectedIds.contains(plant.id);
                           final isFavorite = repo.isFavorite(plant.id);
+                          final isEnabled = _isPlantEnabled(plant, levelModuleObjClasses);
                           return _PlantGridItem(
                             plant: plant,
                             isSelected: isSelected,
                             isFavorite: isFavorite,
-                            onTap: () {
-                              if (widget.isMultiSelect) {
-                                setState(() {
-                                  if (isSelected) {
-                                    _selectedIds.remove(plant.id);
-                                  } else {
-                                    _selectedIds.add(plant.id);
-                                  }
-                                });
-                              } else {
-                                widget.onPlantSelected(plant.id);
-                              }
-                            },
+                            isEnabled: isEnabled,
+                            onTap: () => _onPlantTap(context, plant, isEnabled, levelModuleObjClasses),
                             onLongPress: () => _toggleFavorite(context, plant.id),
                           );
                         },
@@ -335,6 +427,7 @@ class _PlantGridItem extends StatelessWidget {
     required this.plant,
     required this.isSelected,
     required this.isFavorite,
+    required this.isEnabled,
     required this.onTap,
     required this.onLongPress,
   });
@@ -342,6 +435,7 @@ class _PlantGridItem extends StatelessWidget {
   final PlantInfo plant;
   final bool isSelected;
   final bool isFavorite;
+  final bool isEnabled;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
 
@@ -356,7 +450,9 @@ class _PlantGridItem extends StatelessWidget {
     final bgColor = isSelected
         ? theme.colorScheme.primary.withValues(alpha: 0.08)
         : Colors.transparent;
-    return Material(
+    return Opacity(
+      opacity: isEnabled ? 1.0 : 0.5,
+      child: Material(
       color: bgColor,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
@@ -450,6 +546,7 @@ class _PlantGridItem extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

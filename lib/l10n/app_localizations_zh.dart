@@ -1047,6 +1047,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moduleDesc_CustomLevelModuleProperties => '启用自定义草坪框架';
 
   @override
+  String get moduleTitle_UnchartedModeNo42UniverseModule => '42号宇宙模块';
+
+  @override
+  String get moduleDesc_UnchartedModeNo42UniverseModule => '启用42号平行宇宙植物';
+
+  @override
+  String get moduleTitle_PVZ2MausoleumModuleUnchartedMode => '陵墓模块';
+
+  @override
+  String get moduleDesc_PVZ2MausoleumModuleUnchartedMode => '启用陵墓植物';
+
+  @override
+  String plantModuleRequiredMessage(String moduleName) {
+    return '要选择此植物，需要添加「$moduleName」模块。';
+  }
+
+  @override
   String get moduleTitle_StandardLevelIntroProperties => '开场动画';
 
   @override

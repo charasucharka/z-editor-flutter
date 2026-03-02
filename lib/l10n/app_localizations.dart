@@ -2092,6 +2092,36 @@ abstract class AppLocalizations {
   /// **'Enable custom lawn framework'**
   String get moduleDesc_CustomLevelModuleProperties;
 
+  /// No description provided for @moduleTitle_UnchartedModeNo42UniverseModule.
+  ///
+  /// In en, this message translates to:
+  /// **'Universe 42 Module'**
+  String get moduleTitle_UnchartedModeNo42UniverseModule;
+
+  /// No description provided for @moduleDesc_UnchartedModeNo42UniverseModule.
+  ///
+  /// In en, this message translates to:
+  /// **'Enables usage of No 42 parallel universe plants'**
+  String get moduleDesc_UnchartedModeNo42UniverseModule;
+
+  /// No description provided for @moduleTitle_PVZ2MausoleumModuleUnchartedMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Mausoleum module'**
+  String get moduleTitle_PVZ2MausoleumModuleUnchartedMode;
+
+  /// No description provided for @moduleDesc_PVZ2MausoleumModuleUnchartedMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enables usage of Mausoleum plants'**
+  String get moduleDesc_PVZ2MausoleumModuleUnchartedMode;
+
+  /// No description provided for @plantModuleRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'In order to select this plant, {moduleName} needs to be added.'**
+  String plantModuleRequiredMessage(String moduleName);
+
   /// No description provided for @moduleTitle_StandardLevelIntroProperties.
   ///
   /// In en, this message translates to:

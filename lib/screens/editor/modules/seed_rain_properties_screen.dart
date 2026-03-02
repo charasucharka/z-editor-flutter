@@ -19,12 +19,14 @@ class SeedRainPropertiesScreen extends StatefulWidget {
     required this.levelFile,
     required this.onChanged,
     required this.onBack,
+    this.onAddModule,
   });
 
   final String rtid;
   final PvzLevelFile levelFile;
   final VoidCallback onChanged;
   final VoidCallback onBack;
+  final void Function(String objClass)? onAddModule;
 
   @override
   State<SeedRainPropertiesScreen> createState() =>
@@ -175,6 +177,8 @@ class _SeedRainPropertiesScreenState extends State<SeedRainPropertiesScreen> {
               Navigator.pop(ctx);
             },
             onBack: () => Navigator.pop(ctx),
+            levelFile: widget.levelFile,
+            onAddModule: widget.onAddModule,
           ),
         ),
       );

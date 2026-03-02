@@ -1084,6 +1084,26 @@ class AppLocalizationsRu extends AppLocalizations {
       'Включить свою схему лужайки';
 
   @override
+  String get moduleTitle_UnchartedModeNo42UniverseModule =>
+      'Модуль вселенной 42';
+
+  @override
+  String get moduleDesc_UnchartedModeNo42UniverseModule =>
+      'Включает растения параллельной вселенной No 42';
+
+  @override
+  String get moduleTitle_PVZ2MausoleumModuleUnchartedMode => 'Модуль мавзолея';
+
+  @override
+  String get moduleDesc_PVZ2MausoleumModuleUnchartedMode =>
+      'Включает растения мавзолея';
+
+  @override
+  String plantModuleRequiredMessage(String moduleName) {
+    return 'Чтобы выбрать это растение, нужно добавить модуль «$moduleName».';
+  }
+
+  @override
   String get moduleTitle_StandardLevelIntroProperties => 'Заставка';
 
   @override

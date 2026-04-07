@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:rijndael/rijndael.dart';
 import 'package:z_editor/util/pvz2c_crypto.dart';
 
-import 'z_byte_buffer.dart';
+import '../z_byte_buffer.dart';
 import 'sen_popcap_zlib.dart';
 
 /// Hot-update style asset: base64( `[0x10, 0x00]` + AES-CBC(PopCap-zlib(payload)) ).

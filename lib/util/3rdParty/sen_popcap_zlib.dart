@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 
-import 'z_byte_buffer.dart';
+import '../z_byte_buffer.dart';
 
 /// PopCap-style zlib wrapper: `0xDEADFED4` magic + uncompressed length (+ optional 64-bit padding) + zlib payload.
 class PopCapZlib {

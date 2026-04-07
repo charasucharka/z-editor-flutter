@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:z_editor/util/3rdParty/z_byte_buffer.dart';
+import 'package:z_editor/util/z_byte_buffer.dart';
 import 'package:z_editor/util/3rdParty/sen_compiled_text.dart';
 import 'package:z_editor/util/pvz2c_crypto.dart';
 

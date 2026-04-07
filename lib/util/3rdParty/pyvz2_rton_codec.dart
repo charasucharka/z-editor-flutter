@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:rijndael/rijndael.dart';
 import 'package:z_editor/data/pvz_models.dart';
-import 'package:z_editor/util/3rdParty/z_byte_buffer.dart';
+import 'package:z_editor/util/z_byte_buffer.dart';
 import 'package:z_editor/util/pvz2c_crypto.dart';
 
 class Pyvz2RtonCodec {
